@@ -19,7 +19,6 @@ const MemberManagement = () => {
 
   const handleAddMember = (e) => {
     e.preventDefault();
-    // Simular adição de membro
     console.log('Adicionar membro:', newMember);
     const newMemberWithId = { ...newMember, id: localMembers.length + 1, status: 'active' };
     setLocalMembers([...localMembers, newMemberWithId]);
@@ -103,7 +102,28 @@ const MemberManagement = () => {
   }, []);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+    <div style={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      gap: '1.5rem',
+      backgroundColor: '#ffffff',
+      minHeight: '100vh',
+      padding: isMobile ? '1rem' : '2rem'
+    }}>
+      {/* Header */}
+      <div style={{
+        marginBottom: isMobile ? '1rem' : '1.5rem'
+      }}>
+        <h1 style={{
+          fontSize: isMobile ? '1.5rem' : '2rem',
+          fontWeight: 'bold',
+          color: '#1f2937',
+          margin: 0
+        }}>
+          Gestão de Membros
+        </h1>
+      </div>
+
       {/* Add Member Button */}
       <div>
         <button
@@ -145,17 +165,19 @@ const MemberManagement = () => {
           zIndex: 50
         }}>
           <div style={{
-            backgroundColor: '#1f2937',
-            borderRadius: '0.5rem',
+            backgroundColor: '#ffffff',
+            borderRadius: '0.75rem',
             padding: '1.5rem',
             width: '100%',
             maxWidth: '28rem',
-            margin: '1rem'
+            margin: '1rem',
+            border: '1px solid #e5e7eb',
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
           }}>
             <h2 style={{ 
               fontSize: '1.25rem', 
               fontWeight: '600', 
-              color: 'white', 
+              color: '#1f2937', 
               marginBottom: '1rem' 
             }}>
               Adicionar Novo Membro
@@ -164,7 +186,7 @@ const MemberManagement = () => {
               <div>
                 <label style={{ 
                   display: 'block', 
-                  color: '#d1d5db', 
+                  color: '#374151', 
                   fontSize: '0.875rem', 
                   fontWeight: '500', 
                   marginBottom: '0.5rem' 
@@ -177,11 +199,11 @@ const MemberManagement = () => {
                   onChange={(e) => setNewMember({...newMember, name: e.target.value})}
                   style={{
                     width: '100%',
-                    backgroundColor: '#374151',
-                    color: 'white',
+                    backgroundColor: '#ffffff',
+                    color: '#1f2937',
                     padding: '0.75rem',
                     borderRadius: '0.5rem',
-                    border: '1px solid #4b5563',
+                    border: '1px solid #d1d5db',
                     fontSize: '0.875rem',
                     outline: 'none'
                   }}
@@ -191,7 +213,7 @@ const MemberManagement = () => {
               <div>
                 <label style={{ 
                   display: 'block', 
-                  color: '#d1d5db', 
+                  color: '#374151', 
                   fontSize: '0.875rem', 
                   fontWeight: '500', 
                   marginBottom: '0.5rem' 
@@ -204,11 +226,11 @@ const MemberManagement = () => {
                   onChange={(e) => setNewMember({...newMember, memberNumber: e.target.value})}
                   style={{
                     width: '100%',
-                    backgroundColor: '#374151',
-                    color: 'white',
+                    backgroundColor: '#ffffff',
+                    color: '#1f2937',
                     padding: '0.75rem',
                     borderRadius: '0.5rem',
-                    border: '1px solid #4b5563',
+                    border: '1px solid #d1d5db',
                     fontSize: '0.875rem',
                     outline: 'none'
                   }}
@@ -218,7 +240,7 @@ const MemberManagement = () => {
               <div>
                 <label style={{ 
                   display: 'block', 
-                  color: '#d1d5db', 
+                  color: '#374151', 
                   fontSize: '0.875rem', 
                   fontWeight: '500', 
                   marginBottom: '0.5rem' 
@@ -231,11 +253,11 @@ const MemberManagement = () => {
                   onChange={(e) => setNewMember({...newMember, contact: e.target.value})}
                   style={{
                     width: '100%',
-                    backgroundColor: '#374151',
-                    color: 'white',
+                    backgroundColor: '#ffffff',
+                    color: '#1f2937',
                     padding: '0.75rem',
                     borderRadius: '0.5rem',
-                    border: '1px solid #4b5563',
+                    border: '1px solid #d1d5db',
                     fontSize: '0.875rem',
                     outline: 'none'
                   }}
@@ -264,7 +286,7 @@ const MemberManagement = () => {
                   onClick={() => setShowAddForm(false)}
                   style={{
                     flex: 1,
-                    backgroundColor: '#4b5563',
+                    backgroundColor: '#6b7280',
                     color: 'white',
                     padding: '0.75rem',
                     borderRadius: '0.5rem',
@@ -278,259 +300,6 @@ const MemberManagement = () => {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
-
-      {/* Edit Member Form Modal */}
-      {showEditForm && memberToEdit && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 50
-        }}>
-          <div style={{
-            backgroundColor: '#1f2937',
-            borderRadius: '0.5rem',
-            padding: '1.5rem',
-            width: '100%',
-            maxWidth: '28rem',
-            margin: '1rem'
-          }}>
-            <h2 style={{ 
-              fontSize: '1.25rem', 
-              fontWeight: '600', 
-              color: 'white', 
-              marginBottom: '1rem' 
-            }}>
-              Editar Membro: {memberToEdit.name}
-            </h2>
-            <form onSubmit={handleUpdateMember} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div>
-                <label style={{ 
-                  display: 'block', 
-                  color: '#d1d5db', 
-                  fontSize: '0.875rem', 
-                  fontWeight: '500', 
-                  marginBottom: '0.5rem' 
-                }}>
-                  Nome
-                </label>
-                <input
-                  type="text"
-                  value={memberToEdit.name}
-                  onChange={(e) => setMemberToEdit({...memberToEdit, name: e.target.value})}
-                  style={{
-                    width: '100%',
-                    backgroundColor: '#374151',
-                    color: 'white',
-                    padding: '0.75rem',
-                    borderRadius: '0.5rem',
-                    border: '1px solid #4b5563',
-                    fontSize: '0.875rem',
-                    outline: 'none'
-                  }}
-                  required
-                />
-              </div>
-              <div>
-                <label style={{ 
-                  display: 'block', 
-                  color: '#d1d5db', 
-                  fontSize: '0.875rem', 
-                  fontWeight: '500', 
-                  marginBottom: '0.5rem' 
-                }}>
-                  Nº Membro
-                </label>
-                <input
-                  type="text"
-                  value={memberToEdit.memberNumber}
-                  onChange={(e) => setMemberToEdit({...memberToEdit, memberNumber: e.target.value})}
-                  style={{
-                    width: '100%',
-                    backgroundColor: '#374151',
-                    color: 'white',
-                    padding: '0.75rem',
-                    borderRadius: '0.5rem',
-                    border: '1px solid #4b5563',
-                    fontSize: '0.875rem',
-                    outline: 'none'
-                  }}
-                  required
-                />
-              </div>
-              <div>
-                <label style={{ 
-                  display: 'block', 
-                  color: '#d1d5db', 
-                  fontSize: '0.875rem', 
-                  fontWeight: '500', 
-                  marginBottom: '0.5rem' 
-                }}>
-                  Contacto
-                </label>
-                <input
-                  type="text"
-                  value={memberToEdit.contact}
-                  onChange={(e) => setMemberToEdit({...memberToEdit, contact: e.target.value})}
-                  style={{
-                    width: '100%',
-                    backgroundColor: '#374151',
-                    color: 'white',
-                    padding: '0.75rem',
-                    borderRadius: '0.5rem',
-                    border: '1px solid #4b5563',
-                    fontSize: '0.875rem',
-                    outline: 'none'
-                  }}
-                  required
-                />
-              </div>
-              <div>
-                <label style={{ 
-                  display: 'block', 
-                  color: '#d1d5db', 
-                  fontSize: '0.875rem', 
-                  fontWeight: '500', 
-                  marginBottom: '0.5rem' 
-                }}>
-                  Situação
-                </label>
-                <select
-                  value={memberToEdit.status}
-                  onChange={(e) => setMemberToEdit({...memberToEdit, status: e.target.value})}
-                  style={{
-                    width: '100%',
-                    backgroundColor: '#374151',
-                    color: 'white',
-                    padding: '0.75rem',
-                    borderRadius: '0.5rem',
-                    border: '1px solid #4b5563',
-                    fontSize: '0.875rem',
-                    outline: 'none',
-                    appearance: 'none',
-                    cursor: 'pointer'
-                  }}
-                  required
-                >
-                  <option value="active">Activo</option>
-                  <option value="inactive">Inactivo</option>
-                </select>
-              </div>
-              <div style={{ display: 'flex', gap: '0.75rem' }}>
-                <button
-                  type="submit"
-                  style={{
-                    flex: 1,
-                    backgroundColor: '#2563eb',
-                    color: 'white',
-                    padding: '0.75rem',
-                    borderRadius: '0.5rem',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontSize: '0.875rem',
-                    fontWeight: '500'
-                  }}
-                >
-                  Atualizar
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowEditForm(false)}
-                  style={{
-                    flex: 1,
-                    backgroundColor: '#4b5563',
-                    color: 'white',
-                    padding: '0.75rem',
-                    borderRadius: '0.5rem',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontSize: '0.875rem',
-                    fontWeight: '500'
-                  }}
-                >
-                  Cancelar
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Delete Confirmation Modal */}
-      {showDeleteModal && memberToDelete && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 50
-        }}>
-          <div style={{
-            backgroundColor: '#1f2937',
-            borderRadius: '0.5rem',
-            padding: '1.5rem',
-            width: '100%',
-            maxWidth: '24rem',
-            margin: '1rem',
-            textAlign: 'center'
-          }}>
-            <h2 style={{ 
-              fontSize: '1.25rem', 
-              fontWeight: '600', 
-              color: 'white', 
-              marginBottom: '1rem' 
-            }}>
-              Confirmar Exclusão
-            </h2>
-            <p style={{ color: '#d1d5db', marginBottom: '1.5rem' }}>
-              Tem certeza que deseja deletar o membro <span style={{ fontWeight: 'bold' }}>{memberToDelete.name}</span>?
-            </p>
-            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
-              <button
-                onClick={confirmDelete}
-                style={{
-                  backgroundColor: '#ef4444',
-                  color: 'white',
-                  padding: '0.75rem 1.5rem',
-                  borderRadius: '0.5rem',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: '0.875rem',
-                  fontWeight: '500'
-                }}
-              >
-                Deletar
-              </button>
-              <button
-                onClick={cancelDelete}
-                style={{
-                  backgroundColor: '#4b5563',
-                  color: 'white',
-                  padding: '0.75rem 1.5rem',
-                  borderRadius: '0.5rem',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: '0.875rem',
-                  fontWeight: '500'
-                }}
-              >
-                Cancelar
-              </button>
-            </div>
           </div>
         </div>
       )}
@@ -543,10 +312,11 @@ const MemberManagement = () => {
       }}>
         {localMembers.map((member) => (
           <div key={member.id} style={{
-            backgroundColor: '#1f2937',
-            borderRadius: '0.5rem',
+            backgroundColor: '#ffffff',
+            borderRadius: '0.75rem',
             padding: '1.5rem',
-            border: '1px solid #374151',
+            border: '1px solid #e5e7eb',
+            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
             display: 'flex',
             flexDirection: 'column',
             gap: '1rem'
@@ -555,7 +325,7 @@ const MemberManagement = () => {
               <h3 style={{ 
                 fontSize: '1.125rem', 
                 fontWeight: '600', 
-                color: 'white' 
+                color: '#1f2937' 
               }}>
                 {member.name}
               </h3>
@@ -570,16 +340,16 @@ const MemberManagement = () => {
                 {member.status === 'active' ? 'Activo' : 'Inactivo'}
               </span>
             </div>
-            <div style={{ color: '#d1d5db', fontSize: '0.875rem' }}>
-              <p>Nº Membro: <span style={{ fontWeight: 'bold' }}>{member.memberNumber}</span></p>
-              <p>Contacto: <span style={{ fontWeight: 'bold' }}>{member.contact}</span></p>
+            <div style={{ color: '#6b7280', fontSize: '0.875rem' }}>
+              <p>Nº Membro: <span style={{ fontWeight: 'bold', color: '#1f2937' }}>{member.memberNumber}</span></p>
+              <p>Contacto: <span style={{ fontWeight: 'bold', color: '#1f2937' }}>{member.contact}</span></p>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.5rem' }}>
               <div style={{ display: 'flex', gap: '0.75rem' }}>
                 <button
                   onClick={() => handleLinkMember(member.id)}
                   style={{
-                    color: '#9ca3af',
+                    color: '#6b7280',
                     backgroundColor: 'transparent',
                     border: 'none',
                     cursor: 'pointer',
@@ -587,15 +357,15 @@ const MemberManagement = () => {
                     borderRadius: '0.25rem',
                     transition: 'color 0.2s'
                   }}
-                  onMouseOver={(e) => e.currentTarget.style.color = 'white'}
-                  onMouseOut={(e) => e.currentTarget.style.color = '#9ca3af'}
+                  onMouseOver={(e) => e.currentTarget.style.color = '#374151'}
+                  onMouseOut={(e) => e.currentTarget.style.color = '#6b7280'}
                 >
                   <Link style={{ width: '1rem', height: '1rem' }} />
                 </button>
                 <button
                   onClick={() => handleEditMember(member)}
                   style={{
-                    color: '#9ca3af',
+                    color: '#6b7280',
                     backgroundColor: 'transparent',
                     border: 'none',
                     cursor: 'pointer',
@@ -603,15 +373,15 @@ const MemberManagement = () => {
                     borderRadius: '0.25rem',
                     transition: 'color 0.2s'
                   }}
-                  onMouseOver={(e) => e.currentTarget.style.color = 'white'}
-                  onMouseOut={(e) => e.currentTarget.style.color = '#9ca3af'}
+                  onMouseOver={(e) => e.currentTarget.style.color = '#374151'}
+                  onMouseOut={(e) => e.currentTarget.style.color = '#6b7280'}
                 >
                   <Edit style={{ width: '1rem', height: '1rem' }} />
                 </button>
                 <button
                   onClick={() => handleDeleteMember(member)}
                   style={{
-                    color: '#9ca3af',
+                    color: '#6b7280',
                     backgroundColor: 'transparent',
                     border: 'none',
                     cursor: 'pointer',
@@ -620,7 +390,7 @@ const MemberManagement = () => {
                     transition: 'color 0.2s'
                   }}
                   onMouseOver={(e) => e.currentTarget.style.color = '#ef4444'}
-                  onMouseOut={(e) => e.currentTarget.style.color = '#9ca3af'}
+                  onMouseOut={(e) => e.currentTarget.style.color = '#6b7280'}
                 >
                   <Trash2 style={{ width: '1rem', height: '1rem' }} />
                 </button>
@@ -637,7 +407,7 @@ const MemberManagement = () => {
                   width: '2.5rem',
                   height: '1.25rem',
                   borderRadius: '0.625rem',
-                  backgroundColor: member.status === 'active' ? '#10b981' : '#4b5563',
+                  backgroundColor: member.status === 'active' ? '#10b981' : '#d1d5db',
                   position: 'relative',
                   transition: 'background-color 0.2s'
                 }}>
@@ -652,7 +422,7 @@ const MemberManagement = () => {
                     transition: 'left 0.2s'
                   }} />
                 </div>
-                <span style={{ marginLeft: '0.5rem', color: '#d1d5db', fontSize: '0.875rem' }}>
+                <span style={{ marginLeft: '0.5rem', color: '#6b7280', fontSize: '0.875rem' }}>
                   {member.status === 'active' ? 'Ativo' : 'Inativo'}
                 </span>
               </label>

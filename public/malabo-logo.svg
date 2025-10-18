@@ -1,0 +1,42 @@
+<svg width="200" height="120" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Elementos gráficos superiores - formas abstratas azuis -->
+  <g>
+    <!-- Forma menor à esquerda -->
+    <path d="M20 40 Q30 20 40 40 Q40 60 30 60 Q20 60 20 40 Z" fill="#2563eb" opacity="0.8"/>
+    <circle cx="30" cy="25" r="8" fill="#10b981"/>
+    
+    <!-- Linha de conexão -->
+    <path d="M40 40 Q60 35 80 40" stroke="#2563eb" stroke-width="3" fill="none"/>
+    
+    <!-- Forma maior à direita -->
+    <path d="M80 35 Q95 15 110 35 Q110 65 95 65 Q80 65 80 35 Z" fill="#2563eb"/>
+    <circle cx="95" cy="20" r="10" fill="#10b981"/>
+  </g>
+  
+  <!-- Gráfico de crescimento emergindo da base -->
+  <g>
+    <!-- Gráfico de linha ascendente -->
+    <path d="M110 65 L130 55 L150 45 L170 35 L185 25" stroke="#2563eb" stroke-width="4" fill="none"/>
+    
+    <!-- Seta apontando para cima e direita -->
+    <path d="M185 25 L180 20 M185 25 L190 20 M185 25 L185 15" stroke="#2563eb" stroke-width="3" fill="none"/>
+    
+    <!-- Barras verticais do gráfico -->
+    <rect x="115" y="60" width="4" height="15" fill="#2563eb" opacity="0.6"/>
+    <rect x="125" y="55" width="4" height="20" fill="#2563eb" opacity="0.7"/>
+    <rect x="135" y="50" width="4" height="25" fill="#2563eb" opacity="0.8"/>
+    <rect x="145" y="45" width="4" height="30" fill="#2563eb" opacity="0.9"/>
+    <rect x="155" y="40" width="4" height="35" fill="#2563eb"/>
+    
+    <!-- Casa no ponto mais alto -->
+    <path d="M180 20 L175 15 L185 15 Z" fill="#2563eb"/>
+    <circle cx="180" cy="18" r="3" fill="#10b981"/>
+    <text x="180" y="21" font-family="Arial, sans-serif" font-size="4" fill="white" text-anchor="middle">$</text>
+  </g>
+  
+  <!-- Texto principal -->
+  <text x="100" y="95" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#10b981" text-anchor="middle">MALABO MICROCRÉDITO</text>
+  
+  <!-- Slogan -->
+  <text x="100" y="110" font-family="Arial, sans-serif" font-size="10" fill="#2563eb" text-anchor="middle">Solução Financeira Mais Próxima de si</text>
+</svg>

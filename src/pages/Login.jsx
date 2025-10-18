@@ -43,33 +43,22 @@ const Login = ({ onLogin }) => {
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: isMobile ? '1.5rem' : '2rem' }}>
           <div style={{
-            width: isMobile ? '3rem' : '4rem',
-            height: isMobile ? '3rem' : '4rem',
-            backgroundColor: '#374151',
-            borderRadius: '50%',
+            width: isMobile ? '4rem' : '5rem',
+            height: isMobile ? '2.5rem' : '3rem',
+            margin: '0 auto 1rem',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            margin: '0 auto 1rem',
-            position: 'relative'
+            justifyContent: 'center'
           }}>
-            <div style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: isMobile ? '1.5rem' : '2rem',
-              height: isMobile ? '1.5rem' : '2rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <Leaf style={{ 
-                width: isMobile ? '1rem' : '1.5rem', 
-                height: isMobile ? '1rem' : '1.5rem', 
-                color: '#10b981' 
-              }} />
-            </div>
+            <img 
+              src="/malabo-logo.svg" 
+              alt="Malabo Microcrédito" 
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain'
+              }}
+            />
           </div>
           <h1 style={{ 
             fontSize: isMobile ? '1.5rem' : '1.875rem', 
@@ -77,13 +66,13 @@ const Login = ({ onLogin }) => {
             color: 'white', 
             marginBottom: '0.5rem' 
           }}>
-            NOVA ESPERANÇA
+            MALABO MICROCRÉDITO
           </h1>
           <p style={{ 
             color: '#d1d5db',
             fontSize: isMobile ? '0.875rem' : '1rem'
           }}>
-            SISTEMA DE GESTÃO DE GRUPOS DE POUPANÇA
+            SISTEMA DE GESTÃO DE MICROCRÉDITO
           </p>
         </div>
 

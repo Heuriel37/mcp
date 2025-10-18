@@ -21,8 +21,25 @@ const Dashboard = () => {
     <div style={{ 
       display: 'flex', 
       flexDirection: 'column', 
-      gap: isMobile ? '1rem' : '2rem'
+      gap: isMobile ? '1rem' : '2rem',
+      backgroundColor: '#ffffff',
+      minHeight: '100vh',
+      padding: isMobile ? '1rem' : '2rem'
     }}>
+
+      {/* Header */}
+      <div style={{
+        marginBottom: isMobile ? '1rem' : '1.5rem'
+      }}>
+        <h1 style={{
+          fontSize: isMobile ? '1.5rem' : '2rem',
+          fontWeight: 'bold',
+          color: '#1f2937',
+          margin: 0
+        }}>
+          Dashboard
+        </h1>
+      </div>
 
       {/* Metrics Cards */}
       <div style={{ 
@@ -31,13 +48,14 @@ const Dashboard = () => {
         gap: isMobile ? '1rem' : '1.5rem' 
       }}>
         <div style={{
-          backgroundColor: '#1f2937',
-          borderRadius: '0.5rem',
+          backgroundColor: '#ffffff',
+          borderRadius: '0.75rem',
           padding: isMobile ? '1rem' : '1.5rem',
-          border: '1px solid #374151'
+          border: '1px solid #e5e7eb',
+          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
         }}>
           <h3 style={{ 
-            color: '#9ca3af', 
+            color: '#6b7280', 
             fontSize: isMobile ? '0.75rem' : '0.875rem', 
             fontWeight: '500', 
             marginBottom: '0.5rem' 
@@ -47,19 +65,20 @@ const Dashboard = () => {
           <p style={{ 
             fontSize: isMobile ? '1.25rem' : '1.5rem', 
             fontWeight: 'bold', 
-            color: 'white' 
+            color: '#10b981' 
           }}>
             MT {dashboardData.totalSaved.toLocaleString()}
           </p>
         </div>
         <div style={{
-          backgroundColor: '#1f2937',
-          borderRadius: '0.5rem',
+          backgroundColor: '#ffffff',
+          borderRadius: '0.75rem',
           padding: isMobile ? '1rem' : '1.5rem',
-          border: '1px solid #374151'
+          border: '1px solid #e5e7eb',
+          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
         }}>
           <h3 style={{ 
-            color: '#9ca3af', 
+            color: '#6b7280', 
             fontSize: isMobile ? '0.75rem' : '0.875rem', 
             fontWeight: '500', 
             marginBottom: '0.5rem' 
@@ -69,19 +88,20 @@ const Dashboard = () => {
           <p style={{ 
             fontSize: isMobile ? '1.25rem' : '1.5rem', 
             fontWeight: 'bold', 
-            color: 'white' 
+            color: '#10b981' 
           }}>
             MT {dashboardData.totalLoaned.toLocaleString()}
           </p>
         </div>
         <div style={{
-          backgroundColor: '#1f2937',
-          borderRadius: '0.5rem',
+          backgroundColor: '#ffffff',
+          borderRadius: '0.75rem',
           padding: isMobile ? '1rem' : '1.5rem',
-          border: '1px solid #374151'
+          border: '1px solid #e5e7eb',
+          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
         }}>
           <h3 style={{ 
-            color: '#9ca3af', 
+            color: '#6b7280', 
             fontSize: isMobile ? '0.75rem' : '0.875rem', 
             fontWeight: '500', 
             marginBottom: '0.5rem' 
@@ -91,7 +111,7 @@ const Dashboard = () => {
           <p style={{ 
             fontSize: isMobile ? '1.25rem' : '1.5rem', 
             fontWeight: 'bold', 
-            color: 'white' 
+            color: '#10b981' 
           }}>
             MT {dashboardData.upcomingPayments.toLocaleString()}
           </p>
@@ -106,15 +126,16 @@ const Dashboard = () => {
       }}>
         {/* Monthly Evolution Chart */}
         <div style={{
-          backgroundColor: '#1f2937',
-          borderRadius: '0.5rem',
+          backgroundColor: '#ffffff',
+          borderRadius: '0.75rem',
           padding: isMobile ? '1rem' : '1.5rem',
-          border: '1px solid #374151'
+          border: '1px solid #e5e7eb',
+          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
         }}>
           <h3 style={{ 
             fontSize: isMobile ? '1rem' : '1.125rem', 
             fontWeight: '600', 
-            color: 'white', 
+            color: '#1f2937', 
             marginBottom: '1rem' 
           }}>
             Evolução Mensal
@@ -122,33 +143,34 @@ const Dashboard = () => {
           <div style={{ height: isMobile ? '12rem' : '16rem' }}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={dashboardData.monthlyEvolution}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                 <XAxis 
                   dataKey="month" 
-                  stroke="#9ca3af" 
+                  stroke="#6b7280" 
                   fontSize={12}
-                  tick={{ fill: '#9ca3af' }}
+                  tick={{ fill: '#6b7280' }}
                 />
                 <YAxis 
-                  stroke="#9ca3af" 
+                  stroke="#6b7280" 
                   fontSize={12}
-                  tick={{ fill: '#9ca3af' }}
+                  tick={{ fill: '#6b7280' }}
                 />
                 <Tooltip 
                   contentStyle={{ 
-                    backgroundColor: '#1f2937', 
-                    border: '1px solid #374151',
+                    backgroundColor: '#ffffff', 
+                    border: '1px solid #e5e7eb',
                     borderRadius: '0.5rem',
-                    color: '#f9fafb',
-                    fontSize: '0.875rem'
+                    color: '#1f2937',
+                    fontSize: '0.875rem',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
                   }} 
                 />
                 <Line 
                   type="monotone" 
                   dataKey="value" 
-                  stroke="#3b82f6" 
-                  strokeWidth={2}
-                  dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
+                  stroke="#2563eb" 
+                  strokeWidth={3}
+                  dot={{ fill: '#2563eb', strokeWidth: 2, r: 5 }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -157,15 +179,16 @@ const Dashboard = () => {
 
         {/* Alerts */}
         <div style={{
-          backgroundColor: '#1f2937',
-          borderRadius: '0.5rem',
+          backgroundColor: '#ffffff',
+          borderRadius: '0.75rem',
           padding: isMobile ? '1rem' : '1.5rem',
-          border: '1px solid #374151'
+          border: '1px solid #e5e7eb',
+          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
         }}>
           <h3 style={{ 
             fontSize: isMobile ? '1rem' : '1.125rem', 
             fontWeight: '600', 
-            color: 'white', 
+            color: '#1f2937', 
             marginBottom: '1rem' 
           }}>
             Alertas
@@ -178,12 +201,12 @@ const Dashboard = () => {
                 gap: isMobile ? '0.5rem' : '0.75rem' 
               }}>
                 {alert.type === 'meeting' ? (
-                  <Calendar style={{ width: isMobile ? '1rem' : '1.25rem', height: isMobile ? '1rem' : '1.25rem', color: '#60a5fa' }} />
+                  <Calendar style={{ width: isMobile ? '1rem' : '1.25rem', height: isMobile ? '1rem' : '1.25rem', color: '#10b981' }} />
                 ) : (
-                  <AlertCircle style={{ width: isMobile ? '1rem' : '1.25rem', height: isMobile ? '1rem' : '1.25rem', color: '#f87171' }} />
+                  <AlertCircle style={{ width: isMobile ? '1rem' : '1.25rem', height: isMobile ? '1rem' : '1.25rem', color: '#ef4444' }} />
                 )}
                 <span style={{ 
-                  color: '#d1d5db', 
+                  color: alert.type === 'payment' ? '#ef4444' : '#6b7280', 
                   fontSize: isMobile ? '0.75rem' : '0.875rem' 
                 }}>
                   {alert.message}
@@ -196,15 +219,16 @@ const Dashboard = () => {
 
       {/* Recent Savings Table */}
       <div style={{
-        backgroundColor: '#1f2937',
-        borderRadius: '0.5rem',
+        backgroundColor: '#ffffff',
+        borderRadius: '0.75rem',
         padding: '1.5rem',
-        border: '1px solid #374151'
+        border: '1px solid #e5e7eb',
+        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
       }}>
         <h3 style={{ 
           fontSize: '1.125rem', 
           fontWeight: '600', 
-          color: 'white', 
+          color: '#1f2937', 
           marginBottom: '1rem' 
         }}>
           Registo de Poupanças Recentes
@@ -212,10 +236,10 @@ const Dashboard = () => {
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%' }}>
             <thead>
-              <tr style={{ borderBottom: '1px solid #374151' }}>
+              <tr style={{ borderBottom: '1px solid #e5e7eb' }}>
                 <th style={{ 
                   textAlign: 'left', 
-                  color: '#9ca3af', 
+                  color: '#6b7280', 
                   padding: isMobile ? '0.5rem 0' : '0.75rem 0',
                   fontSize: isMobile ? '0.75rem' : '0.875rem',
                   fontWeight: '500'
@@ -224,7 +248,7 @@ const Dashboard = () => {
                 </th>
                 <th style={{ 
                   textAlign: 'left', 
-                  color: '#9ca3af', 
+                  color: '#6b7280', 
                   padding: isMobile ? '0.5rem 0' : '0.75rem 0',
                   fontSize: isMobile ? '0.75rem' : '0.875rem',
                   fontWeight: '500'
@@ -233,7 +257,7 @@ const Dashboard = () => {
                 </th>
                 <th style={{ 
                   textAlign: 'left', 
-                  color: '#9ca3af', 
+                  color: '#6b7280', 
                   padding: isMobile ? '0.5rem 0' : '0.75rem 0',
                   fontSize: isMobile ? '0.75rem' : '0.875rem',
                   fontWeight: '500'
@@ -244,23 +268,23 @@ const Dashboard = () => {
             </thead>
             <tbody>
               {dashboardData.recentSavings.map((saving, index) => (
-                <tr key={index} style={{ borderBottom: '1px solid #374151' }}>
+                <tr key={index} style={{ borderBottom: '1px solid #e5e7eb' }}>
                   <td style={{ 
-                    color: 'white', 
+                    color: '#1f2937', 
                     padding: isMobile ? '0.5rem 0' : '0.75rem 0',
                     fontSize: isMobile ? '0.75rem' : '0.875rem'
                   }}>
                     {saving.member}
                   </td>
                   <td style={{ 
-                    color: '#d1d5db', 
+                    color: '#6b7280', 
                     padding: isMobile ? '0.5rem 0' : '0.75rem 0',
                     fontSize: isMobile ? '0.75rem' : '0.875rem'
                   }}>
                     {saving.date}
                   </td>
                   <td style={{ 
-                    color: 'white', 
+                    color: '#1f2937', 
                     padding: isMobile ? '0.5rem 0' : '0.75rem 0',
                     fontSize: isMobile ? '0.75rem' : '0.875rem'
                   }}>

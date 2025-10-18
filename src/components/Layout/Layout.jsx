@@ -41,7 +41,7 @@ const Layout = ({ children }) => {
     <div style={{
       display: 'flex',
       height: '100vh',
-      backgroundColor: '#111827'
+      backgroundColor: '#ffffff'
     }}>
       {isMobile && sidebarOpen && (
         <div
@@ -67,18 +67,19 @@ const Layout = ({ children }) => {
           left: 0,
           right: 0,
           height: '4rem',
-          backgroundColor: '#111827',
-          borderBottom: '1px solid #374151',
+          backgroundColor: '#ffffff',
+          borderBottom: '1px solid #e5e7eb',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: '0 1rem',
-          zIndex: 1000
+          zIndex: 1000,
+          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
         }}>
           <h1 style={{ 
             fontSize: '1.25rem', 
             fontWeight: 'bold', 
-            color: 'white',
+            color: '#1f2937',
             margin: 0
           }}>
             {getPageTitle()}
@@ -86,13 +87,13 @@ const Layout = ({ children }) => {
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             style={{
-              backgroundColor: '#374151',
+              backgroundColor: '#f3f4f6',
               border: 'none',
               borderRadius: '0.5rem',
               padding: '0.5rem',
-              color: 'white',
+              color: '#374151',
               cursor: 'pointer',
-              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+              boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
             }}
           >
             <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">

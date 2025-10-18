@@ -26,7 +26,7 @@ const Sidebar = ({ isMobile, sidebarOpen, setSidebarOpen }) => {
   return (
     <div style={{
       width: isMobile ? '100%' : '16rem',
-      backgroundColor: '#1f2937',
+      backgroundColor: '#ffffff',
       height: '100vh',
       position: 'fixed',
       left: isMobile ? (sidebarOpen ? '0' : '-100%') : '0',
@@ -34,12 +34,14 @@ const Sidebar = ({ isMobile, sidebarOpen, setSidebarOpen }) => {
       display: 'flex',
       flexDirection: 'column',
       zIndex: 1000,
-      transition: 'left 0.3s ease'
+      transition: 'left 0.3s ease',
+      borderRight: '1px solid #e5e7eb',
+      boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
     }}>
       {/* Logo */}
       <div style={{
         padding: '1.5rem',
-        borderBottom: '1px solid #374151'
+        borderBottom: '1px solid #e5e7eb'
       }}>
         <div style={{
           display: 'flex',
@@ -47,22 +49,31 @@ const Sidebar = ({ isMobile, sidebarOpen, setSidebarOpen }) => {
           gap: '0.75rem'
         }}>
           <div style={{
-            width: '2rem',
-            height: '2rem',
-            backgroundColor: '#10b981',
-            borderRadius: '50%',
+            width: '2.5rem',
+            height: '1.5rem',
+            backgroundColor: '#ffffff',
+            borderRadius: '0.25rem',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            border: '1px solid #e5e7eb'
           }}>
-            <Leaf style={{ width: '1.25rem', height: '1.25rem', color: 'white' }} />
+            <img 
+              src="/malabo-logo.svg" 
+              alt="Malabo Microcrédito" 
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain'
+              }}
+            />
           </div>
           <span style={{
-            color: 'white',
+            color: '#374151',
             fontWeight: 'bold',
-            fontSize: '1.125rem'
+            fontSize: '1rem'
           }}>
-            NOVA ESPERANÇA
+            MALABO MICROCRÉDITO
           </span>
         </div>
       </div>
@@ -92,7 +103,7 @@ const Sidebar = ({ isMobile, sidebarOpen, setSidebarOpen }) => {
                     borderRadius: '0.5rem',
                     textDecoration: 'none',
                     backgroundColor: isActive ? '#2563eb' : 'transparent',
-                    color: isActive ? 'white' : '#d1d5db',
+                    color: isActive ? 'white' : '#6b7280',
                     transition: 'all 0.2s',
                     border: 'none',
                     width: '100%',
@@ -101,14 +112,14 @@ const Sidebar = ({ isMobile, sidebarOpen, setSidebarOpen }) => {
                   }}
                   onMouseOver={(e) => {
                     if (!isActive) {
-                      e.currentTarget.style.backgroundColor = '#374151';
-                      e.currentTarget.style.color = 'white';
+                      e.currentTarget.style.backgroundColor = '#f3f4f6';
+                      e.currentTarget.style.color = '#374151';
                     }
                   }}
                   onMouseOut={(e) => {
                     if (!isActive) {
                       e.currentTarget.style.backgroundColor = 'transparent';
-                      e.currentTarget.style.color = '#d1d5db';
+                      e.currentTarget.style.color = '#6b7280';
                     }
                   }}
                 >
@@ -121,7 +132,7 @@ const Sidebar = ({ isMobile, sidebarOpen, setSidebarOpen }) => {
         </ul>
         
         {/* Logout Button */}
-        <div style={{ padding: '1rem', borderTop: '1px solid #374151' }}>
+        <div style={{ padding: '1rem', borderTop: '1px solid #e5e7eb' }}>
           <button
             onClick={() => setShowLogoutModal(true)}
             style={{
@@ -131,7 +142,7 @@ const Sidebar = ({ isMobile, sidebarOpen, setSidebarOpen }) => {
               padding: '0.75rem 1rem',
               borderRadius: '0.5rem',
               backgroundColor: 'transparent',
-              color: '#d1d5db',
+              color: '#6b7280',
               border: 'none',
               width: '100%',
               textAlign: 'left',
@@ -139,12 +150,12 @@ const Sidebar = ({ isMobile, sidebarOpen, setSidebarOpen }) => {
               transition: 'all 0.2s'
             }}
             onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = '#374151';
-              e.currentTarget.style.color = 'white';
+              e.currentTarget.style.backgroundColor = '#f3f4f6';
+              e.currentTarget.style.color = '#374151';
             }}
             onMouseOut={(e) => {
               e.currentTarget.style.backgroundColor = 'transparent';
-              e.currentTarget.style.color = '#d1d5db';
+              e.currentTarget.style.color = '#6b7280';
             }}
           >
             <LogOut style={{ width: '1.25rem', height: '1.25rem' }} />
@@ -168,24 +179,25 @@ const Sidebar = ({ isMobile, sidebarOpen, setSidebarOpen }) => {
           zIndex: 60
         }}>
           <div style={{
-            backgroundColor: '#1f2937',
+            backgroundColor: '#ffffff',
             borderRadius: '0.5rem',
             padding: '1.5rem',
             width: '100%',
             maxWidth: '24rem',
             margin: '1rem',
-            border: '1px solid #374151'
+            border: '1px solid #e5e7eb',
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
           }}>
             <h3 style={{ 
               fontSize: '1.125rem', 
               fontWeight: '600', 
-              color: 'white', 
+              color: '#1f2937', 
               marginBottom: '1rem' 
             }}>
               Confirmar Saída
             </h3>
             <p style={{ 
-              color: '#d1d5db', 
+              color: '#6b7280', 
               fontSize: '0.875rem', 
               marginBottom: '1.5rem' 
             }}>

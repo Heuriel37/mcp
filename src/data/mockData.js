@@ -1,4 +1,4 @@
-// Dados estáticos para o sistema NOVA ESPERANÇA
+// Dados estáticos para o sistema Malabo Microcrédito
 
 export const members = [
   {
