@@ -1,53 +1,51 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Calendar, AlertCircle, Menu } from 'lucide-react';
+import { Calendar, AlertCircle } from 'lucide-react';
 import { dashboardData } from '../data/mockData';
 
 const Dashboard = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h1 style={{ 
-          fontSize: '1.875rem', 
-          fontWeight: 'bold', 
-          color: 'white' 
-        }}>
-          Dashboard
-        </h1>
-        <button style={{
-          color: '#9ca3af',
-          backgroundColor: 'transparent',
-          border: 'none',
-          cursor: 'pointer',
-          padding: '0.5rem'
-        }}>
-          <Menu style={{ width: '1.5rem', height: '1.5rem' }} />
-        </button>
-      </div>
+    <div style={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      gap: isMobile ? '1rem' : '2rem'
+    }}>
 
       {/* Metrics Cards */}
       <div style={{ 
         display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', 
-        gap: '1.5rem' 
+        gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(250px, 1fr))', 
+        gap: isMobile ? '1rem' : '1.5rem' 
       }}>
         <div style={{
           backgroundColor: '#1f2937',
           borderRadius: '0.5rem',
-          padding: '1.5rem',
+          padding: isMobile ? '1rem' : '1.5rem',
           border: '1px solid #374151'
         }}>
           <h3 style={{ 
             color: '#9ca3af', 
-            fontSize: '0.875rem', 
+            fontSize: isMobile ? '0.75rem' : '0.875rem', 
             fontWeight: '500', 
             marginBottom: '0.5rem' 
           }}>
             Total Poupado
           </h3>
           <p style={{ 
-            fontSize: '1.5rem', 
+            fontSize: isMobile ? '1.25rem' : '1.5rem', 
             fontWeight: 'bold', 
             color: 'white' 
           }}>
@@ -57,19 +55,19 @@ const Dashboard = () => {
         <div style={{
           backgroundColor: '#1f2937',
           borderRadius: '0.5rem',
-          padding: '1.5rem',
+          padding: isMobile ? '1rem' : '1.5rem',
           border: '1px solid #374151'
         }}>
           <h3 style={{ 
             color: '#9ca3af', 
-            fontSize: '0.875rem', 
+            fontSize: isMobile ? '0.75rem' : '0.875rem', 
             fontWeight: '500', 
             marginBottom: '0.5rem' 
           }}>
             Total Emprestado
           </h3>
           <p style={{ 
-            fontSize: '1.5rem', 
+            fontSize: isMobile ? '1.25rem' : '1.5rem', 
             fontWeight: 'bold', 
             color: 'white' 
           }}>
@@ -79,19 +77,19 @@ const Dashboard = () => {
         <div style={{
           backgroundColor: '#1f2937',
           borderRadius: '0.5rem',
-          padding: '1.5rem',
+          padding: isMobile ? '1rem' : '1.5rem',
           border: '1px solid #374151'
         }}>
           <h3 style={{ 
             color: '#9ca3af', 
-            fontSize: '0.875rem', 
+            fontSize: isMobile ? '0.75rem' : '0.875rem', 
             fontWeight: '500', 
             marginBottom: '0.5rem' 
           }}>
             Próximos Pagamentos
           </h3>
           <p style={{ 
-            fontSize: '1.5rem', 
+            fontSize: isMobile ? '1.25rem' : '1.5rem', 
             fontWeight: 'bold', 
             color: 'white' 
           }}>
@@ -103,25 +101,25 @@ const Dashboard = () => {
       {/* Charts and Alerts */}
       <div style={{ 
         display: 'grid', 
-        gridTemplateColumns: '2fr 1fr', 
-        gap: '1.5rem' 
+        gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr', 
+        gap: isMobile ? '1rem' : '1.5rem' 
       }}>
         {/* Monthly Evolution Chart */}
         <div style={{
           backgroundColor: '#1f2937',
           borderRadius: '0.5rem',
-          padding: '1.5rem',
+          padding: isMobile ? '1rem' : '1.5rem',
           border: '1px solid #374151'
         }}>
           <h3 style={{ 
-            fontSize: '1.125rem', 
+            fontSize: isMobile ? '1rem' : '1.125rem', 
             fontWeight: '600', 
             color: 'white', 
             marginBottom: '1rem' 
           }}>
             Evolução Mensal
           </h3>
-          <div style={{ height: '16rem' }}>
+          <div style={{ height: isMobile ? '12rem' : '16rem' }}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={dashboardData.monthlyEvolution}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
@@ -161,32 +159,32 @@ const Dashboard = () => {
         <div style={{
           backgroundColor: '#1f2937',
           borderRadius: '0.5rem',
-          padding: '1.5rem',
+          padding: isMobile ? '1rem' : '1.5rem',
           border: '1px solid #374151'
         }}>
           <h3 style={{ 
-            fontSize: '1.125rem', 
+            fontSize: isMobile ? '1rem' : '1.125rem', 
             fontWeight: '600', 
             color: 'white', 
             marginBottom: '1rem' 
           }}>
             Alertas
           </h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '0.5rem' : '0.75rem' }}>
             {dashboardData.alerts.map((alert, index) => (
               <div key={index} style={{ 
                 display: 'flex', 
                 alignItems: 'center', 
-                gap: '0.75rem' 
+                gap: isMobile ? '0.5rem' : '0.75rem' 
               }}>
                 {alert.type === 'meeting' ? (
-                  <Calendar style={{ width: '1.25rem', height: '1.25rem', color: '#60a5fa' }} />
+                  <Calendar style={{ width: isMobile ? '1rem' : '1.25rem', height: isMobile ? '1rem' : '1.25rem', color: '#60a5fa' }} />
                 ) : (
-                  <AlertCircle style={{ width: '1.25rem', height: '1.25rem', color: '#f87171' }} />
+                  <AlertCircle style={{ width: isMobile ? '1rem' : '1.25rem', height: isMobile ? '1rem' : '1.25rem', color: '#f87171' }} />
                 )}
                 <span style={{ 
                   color: '#d1d5db', 
-                  fontSize: '0.875rem' 
+                  fontSize: isMobile ? '0.75rem' : '0.875rem' 
                 }}>
                   {alert.message}
                 </span>
@@ -218,8 +216,8 @@ const Dashboard = () => {
                 <th style={{ 
                   textAlign: 'left', 
                   color: '#9ca3af', 
-                  padding: '0.75rem 0',
-                  fontSize: '0.875rem',
+                  padding: isMobile ? '0.5rem 0' : '0.75rem 0',
+                  fontSize: isMobile ? '0.75rem' : '0.875rem',
                   fontWeight: '500'
                 }}>
                   Membro
@@ -227,8 +225,8 @@ const Dashboard = () => {
                 <th style={{ 
                   textAlign: 'left', 
                   color: '#9ca3af', 
-                  padding: '0.75rem 0',
-                  fontSize: '0.875rem',
+                  padding: isMobile ? '0.5rem 0' : '0.75rem 0',
+                  fontSize: isMobile ? '0.75rem' : '0.875rem',
                   fontWeight: '500'
                 }}>
                   Data
@@ -236,8 +234,8 @@ const Dashboard = () => {
                 <th style={{ 
                   textAlign: 'left', 
                   color: '#9ca3af', 
-                  padding: '0.75rem 0',
-                  fontSize: '0.875rem',
+                  padding: isMobile ? '0.5rem 0' : '0.75rem 0',
+                  fontSize: isMobile ? '0.75rem' : '0.875rem',
                   fontWeight: '500'
                 }}>
                   Valor
@@ -249,22 +247,22 @@ const Dashboard = () => {
                 <tr key={index} style={{ borderBottom: '1px solid #374151' }}>
                   <td style={{ 
                     color: 'white', 
-                    padding: '0.75rem 0',
-                    fontSize: '0.875rem'
+                    padding: isMobile ? '0.5rem 0' : '0.75rem 0',
+                    fontSize: isMobile ? '0.75rem' : '0.875rem'
                   }}>
                     {saving.member}
                   </td>
                   <td style={{ 
                     color: '#d1d5db', 
-                    padding: '0.75rem 0',
-                    fontSize: '0.875rem'
+                    padding: isMobile ? '0.5rem 0' : '0.75rem 0',
+                    fontSize: isMobile ? '0.75rem' : '0.875rem'
                   }}>
                     {saving.date}
                   </td>
                   <td style={{ 
                     color: 'white', 
-                    padding: '0.75rem 0',
-                    fontSize: '0.875rem'
+                    padding: isMobile ? '0.5rem 0' : '0.75rem 0',
+                    fontSize: isMobile ? '0.75rem' : '0.875rem'
                   }}>
                     MT {saving.amount.toLocaleString()}
                   </td>
