@@ -1,0 +1,197 @@
+import React, { useState, useEffect } from 'react';
+import { Leaf, User, Lock } from 'lucide-react';
+import '../index.css';
+
+const Login = ({ onLogin }) => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Simular login - aceita qualquer credencial
+    if (username && password) {
+      onLogin();
+    }
+  };
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      backgroundColor: '#1f2937',
+      display: 'flex',
+      alignItems: isMobile ? 'flex-start' : 'center',
+      justifyContent: 'center',
+      padding: isMobile ? '2rem 1rem' : '1rem'
+    }}>
+      <div style={{ 
+        maxWidth: isMobile ? '100%' : '28rem', 
+        width: '100%',
+        marginTop: isMobile ? '2rem' : '0'
+      }}>
+        {/* Logo */}
+        <div style={{ textAlign: 'center', marginBottom: isMobile ? '1.5rem' : '2rem' }}>
+          <div style={{
+            width: isMobile ? '3rem' : '4rem',
+            height: isMobile ? '3rem' : '4rem',
+            backgroundColor: '#374151',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 1rem',
+            position: 'relative'
+          }}>
+            <div style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: isMobile ? '1.5rem' : '2rem',
+              height: isMobile ? '1.5rem' : '2rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <Leaf style={{ 
+                width: isMobile ? '1rem' : '1.5rem', 
+                height: isMobile ? '1rem' : '1.5rem', 
+                color: '#10b981' 
+              }} />
+            </div>
+          </div>
+          <h1 style={{ 
+            fontSize: isMobile ? '1.5rem' : '1.875rem', 
+            fontWeight: 'bold', 
+            color: 'white', 
+            marginBottom: '0.5rem' 
+          }}>
+            NOVA ESPERANÇA
+          </h1>
+          <p style={{ 
+            color: '#d1d5db',
+            fontSize: isMobile ? '0.875rem' : '1rem'
+          }}>
+            SISTEMA DE GESTÃO DE GRUPOS DE POUPANÇA
+          </p>
+        </div>
+
+        {/* Login Form */}
+        <div style={{
+          backgroundColor: '#374151',
+          borderRadius: '0.5rem',
+          padding: isMobile ? '1.5rem' : '2rem'
+        }}>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            {/* Username Field */}
+            <div>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                backgroundColor: '#4b5563',
+                borderRadius: '0.5rem',
+                padding: isMobile ? '0.875rem 0.75rem' : '0.75rem 1rem'
+              }}>
+                <User style={{ width: '1.25rem', height: '1.25rem', color: '#9ca3af' }} />
+                <input
+                  type="text"
+                  placeholder="Usuário"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  style={{
+                    backgroundColor: 'transparent',
+                    color: 'white',
+                    flex: 1,
+                    border: 'none',
+                    outline: 'none',
+                    fontSize: '1rem'
+                  }}
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Password Field */}
+            <div>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                backgroundColor: '#4b5563',
+                borderRadius: '0.5rem',
+                padding: isMobile ? '0.875rem 0.75rem' : '0.75rem 1rem'
+              }}>
+                <Lock style={{ width: '1.25rem', height: '1.25rem', color: '#9ca3af' }} />
+                <input
+                  type="password"
+                  placeholder="Senha"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  style={{
+                    backgroundColor: 'transparent',
+                    color: 'white',
+                    flex: 1,
+                    border: 'none',
+                    outline: 'none',
+                    fontSize: '1rem'
+                  }}
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Login Button */}
+            <button
+              type="submit"
+              style={{
+                width: '100%',
+                backgroundColor: '#2563eb',
+                color: 'white',
+                padding: isMobile ? '1rem' : '0.875rem',
+                borderRadius: '0.5rem',
+                fontWeight: '600',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: isMobile ? '1.125rem' : '1rem',
+                transition: 'background-color 0.2s'
+              }}
+              onMouseOver={(e) => e.target.style.backgroundColor = '#1d4ed8'}
+              onMouseOut={(e) => e.target.style.backgroundColor = '#2563eb'}
+            >
+              Entrar
+            </button>
+
+            {/* Forgot Password */}
+            <div style={{ textAlign: 'center' }}>
+              <a href="#" style={{ 
+                color: 'white', 
+                fontSize: isMobile ? '1rem' : '0.875rem',
+                textDecoration: 'none',
+                transition: 'opacity 0.2s'
+              }}
+              onMouseOver={(e) => e.target.style.opacity = '0.8'}
+              onMouseOut={(e) => e.target.style.opacity = '1'}
+              >
+                Esqueci a senha
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Login;
