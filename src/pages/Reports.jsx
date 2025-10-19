@@ -48,6 +48,24 @@ const Reports = () => {
     });
   }, [fromDate, toDate, memberQuery]);
 
+  const exportCSV = () => {
+    const header = ['Data','Membro','Valor'];
+    const rows = filteredPayments.map((p) => {
+      const loan = loans.find((l) => l.id === p.loanId);
+      return [p.date, (loan?.member || '-'), String(Number(p.amount))];
+    });
+    const csv = [header, ...rows].map(r => r.map(x => `"${String(x).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'relatorio_pagamentos.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   const totals = useMemo(() => {
     const totalLoaned = loans.reduce((s, l) => s + (Number(l.amount) || 0), 0);
     const totalPaid = filteredPayments.reduce((s, p) => s + (Number(p.amount) || 0), 0);
@@ -66,10 +84,14 @@ const Reports = () => {
       display: 'flex', flexDirection: 'column', gap: isMobile ? '1rem' : '1.5rem',
       backgroundColor: '#ffffff', minHeight: '100vh', padding: isMobile ? '1rem' : '2rem'
     }}>
-      <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: isMobile ? 'stretch' : 'center', gap: '0.75rem', flexDirection: isMobile ? 'column' : 'row' }}>
         <h1 style={{ fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: 'bold', color: '#1f2937', margin: 0 }}>
           Relatórios
         </h1>
+        <button onClick={exportCSV} style={{ backgroundColor: '#2563eb', color: '#fff', padding: '0.5rem 1rem', borderRadius: '0.5rem', border: 'none', cursor: 'pointer', fontSize: '0.875rem', fontWeight: 500 }}
+          onMouseOver={(e)=> e.currentTarget.style.backgroundColor = '#1d4ed8'}
+          onMouseOut={(e)=> e.currentTarget.style.backgroundColor = '#2563eb'}
+        >Exportar CSV</button>
       </div>
 
       {/* Filtros */}
