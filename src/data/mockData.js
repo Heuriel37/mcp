@@ -4,7 +4,7 @@ export const users = [
   { id: 1, username: 'admin', password: 'admin123', role: 'admin', name: 'Administrador' },
   { id: 2, username: 'tecnico', password: 'tecnico123', role: 'tecnico', name: 'Técnico Adm.' },
   { id: 3, username: 'agente', password: 'agente123', role: 'agente', name: 'Agente de Campo' },
-  { id: 4, username: 'cliente', password: 'cliente123', role: 'cliente', name: 'Cliente' }
+  { id: 4, username: 'cliente', password: 'cliente123', role: 'cliente', name: 'Cliente', memberId: 2 }
 ];
 
 export const members = [

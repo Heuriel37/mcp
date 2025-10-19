@@ -7,6 +7,7 @@ import MemberManagement from './pages/MemberManagement';
 import LoanManagement from './pages/LoanManagement';
 import Reports from './pages/Reports';
 import UsersManagement from './pages/UsersManagement';
+import ClientPortal from './pages/ClientPortal';
  
 
 function App() {
@@ -60,6 +61,12 @@ function App() {
             try { role = localStorage.getItem('role') || 'admin'; } catch {}
             const allow = ['admin'].includes(role);
             return allow ? <UsersManagement /> : <Navigate to="/" replace />;
+          })()} />
+          <Route path="/portal" element={(() => {
+            let role = 'admin';
+            try { role = localStorage.getItem('role') || 'admin'; } catch {}
+            const allow = ['cliente'].includes(role);
+            return allow ? <ClientPortal /> : <Navigate to="/" replace />;
           })()} />
         </Routes>
       </Layout>

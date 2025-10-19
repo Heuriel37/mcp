@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { Navigate } from 'react-router-dom';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Calendar, AlertCircle } from 'lucide-react';
 import { dashboardData, loans, payments } from '../data/mockData';
@@ -39,6 +40,11 @@ const Dashboard = () => {
   }, []);
 
   const role = (() => { try { return localStorage.getItem('role') || 'admin'; } catch { return 'admin'; } })();
+
+  // Redirecionar cliente para o Portal
+  if (role === 'cliente') {
+    return <Navigate to="/portal" replace />;
+  }
 
   return (
     <div style={{ 
@@ -183,7 +189,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Alerts */}
+        {/* Alerts (calculados) */}
         <div style={{
           backgroundColor: '#ffffff',
           borderRadius: '0.75rem',
@@ -197,29 +203,45 @@ const Dashboard = () => {
             color: '#1f2937', 
             marginBottom: '1rem' 
           }}>
-            Alertas
+            Alertas de Empréstimos
           </h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '0.5rem' : '0.75rem' }}>
-            {dashboardData.alerts.map((alert, index) => (
-              <div key={index} style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: isMobile ? '0.5rem' : '0.75rem' 
-              }}>
-                {alert.type === 'meeting' ? (
-                  <Calendar style={{ width: isMobile ? '1rem' : '1.25rem', height: isMobile ? '1rem' : '1.25rem', color: '#10b981' }} />
-                ) : (
-                  <AlertCircle style={{ width: isMobile ? '1rem' : '1.25rem', height: isMobile ? '1rem' : '1.25rem', color: '#ef4444' }} />
-                )}
-                <span style={{ 
-                  color: alert.type === 'payment' ? '#ef4444' : '#6b7280', 
-                  fontSize: isMobile ? '0.75rem' : '0.875rem' 
-                }}>
-                  {alert.message}
-                </span>
+          {(() => {
+            const today = new Date();
+            const in7 = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7);
+            const validLoans = (loans || []).filter(l => !!parsePtDate(l.dueDate));
+            const upcoming = validLoans.filter(l => {
+              const d = parsePtDate(l.dueDate); return d && d >= today && d <= in7;
+            }).sort((a,b)=> parsePtDate(a.dueDate)-parsePtDate(b.dueDate));
+            const overdue = validLoans.filter(l => {
+              const d = parsePtDate(l.dueDate); return d && d < today;
+            }).sort((a,b)=> parsePtDate(a.dueDate)-parsePtDate(b.dueDate));
+            return (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '0.75rem' }}>
+                <div>
+                  <h4 style={{ margin: 0, marginBottom: '0.5rem', color: '#374151', fontSize: '0.95rem', fontWeight: 600 }}>Vencimentos Próximos (7 dias)</h4>
+                  {(upcoming.length > 0) ? upcoming.map(l => (
+                    <div key={l.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: '#374151' }}>
+                      <span>Empréstimo #{l.id} — {l.member}</span>
+                      <span>{l.dueDate}</span>
+                    </div>
+                  )) : (
+                    <div style={{ color: '#6b7280', fontSize: '0.875rem' }}>Sem vencimentos nos próximos 7 dias.</div>
+                  )}
+                </div>
+                <div>
+                  <h4 style={{ margin: 0, marginBottom: '0.5rem', color: '#374151', fontSize: '0.95rem', fontWeight: 600 }}>Em Atraso</h4>
+                  {(overdue.length > 0) ? overdue.map(l => (
+                    <div key={l.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: '#ef4444' }}>
+                      <span>Empréstimo #{l.id} — {l.member}</span>
+                      <span>{l.dueDate}</span>
+                    </div>
+                  )) : (
+                    <div style={{ color: '#6b7280', fontSize: '0.875rem' }}>Sem empréstimos em atraso.</div>
+                  )}
+                </div>
               </div>
-            ))}
-          </div>
+            );
+          })()}
         </div>
       </div>
 

@@ -17,7 +17,8 @@ const Sidebar = ({ isMobile, sidebarOpen, setSidebarOpen }) => {
     { path: '/members', icon: Users, label: 'Gestão de Membros' },
     { path: '/loans', icon: CreditCard, label: 'Gestão de Empréstimos' },
     { path: '/reports', icon: LayoutDashboard, label: 'Relatórios' },
-    { path: '/users', icon: Users, label: 'Utilizadores' }
+    { path: '/users', icon: Users, label: 'Utilizadores' },
+    { path: '/portal', icon: LayoutDashboard, label: 'Meu Portal' }
   ];
 
   const role = (() => {
@@ -27,14 +28,15 @@ const Sidebar = ({ isMobile, sidebarOpen, setSidebarOpen }) => {
   const allowedByRole = (item) => {
     switch (role) {
       case 'admin':
-        return true; // Admin vê todos
+        // Admin não vê o Portal do Cliente
+        return item.path !== '/portal';
       case 'tecnico':
         // Técnico não vê Utilizadores
         return item.path !== '/users';
       case 'agente':
         return item.path === '/' || item.path === '/loans' || item.path === '/reports';
       case 'cliente':
-        return item.path === '/';
+        return item.path === '/portal';
       default:
         return item.path === '/';
     }

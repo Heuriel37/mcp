@@ -53,6 +53,7 @@ const Login = ({ onLogin }) => {
     try {
       localStorage.setItem('role', found.role);
       localStorage.setItem('userName', found.name || found.username);
+      localStorage.setItem('username', found.username);
     } catch {}
     onLogin();
   };
