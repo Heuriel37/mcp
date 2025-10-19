@@ -229,8 +229,9 @@ const Sidebar = ({ isMobile, sidebarOpen, setSidebarOpen }) => {
                   try {
                     localStorage.removeItem('isLoggedIn');
                     localStorage.removeItem('role');
+                    localStorage.removeItem('userName');
                   } catch {}
-                  window.location.reload();
+                  window.location.replace('/');
                 }}
                 style={{
                   flex: 1,

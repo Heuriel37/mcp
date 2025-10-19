@@ -4,11 +4,25 @@ import { users as mockUsers } from '../data/mockData';
 const safeLoadUsers = () => {
   try {
     const raw = localStorage.getItem('users');
-    if (!raw) return mockUsers || [];
+    if (!raw) {
+      // semear se não existir
+      try { localStorage.setItem('users', JSON.stringify(mockUsers || [])); } catch {}
+      return mockUsers || [];
+    }
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) return parsed;
+    if (Array.isArray(parsed)) {
+      if (parsed.length === 0) {
+        // se array vazio, semear mock
+        try { localStorage.setItem('users', JSON.stringify(mockUsers || [])); } catch {}
+        return mockUsers || [];
+      }
+      return parsed;
+    }
+    // inválido, semear mock
+    try { localStorage.setItem('users', JSON.stringify(mockUsers || [])); } catch {}
     return mockUsers || [];
   } catch {
+    try { localStorage.setItem('users', JSON.stringify(mockUsers || [])); } catch {}
     return mockUsers || [];
   }
 };

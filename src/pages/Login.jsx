@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Leaf, User, Lock } from 'lucide-react';
+import { Leaf, User, Lock, Eye, EyeOff } from 'lucide-react';
 import { users as mockUsers } from '../data/mockData';
 import '../index.css';
 
@@ -8,6 +8,7 @@ const Login = ({ onLogin }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isMobile, setIsMobile] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -23,16 +24,28 @@ const Login = ({ onLogin }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setError('');
-    if (!username || !password) return;
-    let users = mockUsers || [];
+    const u = (username || '').trim();
+    const p = (password || '').trim();
+    if (!u || !p) return;
+    let localUsers = [];
     try {
       const raw = localStorage.getItem('users');
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) users = parsed;
+        if (Array.isArray(parsed)) localUsers = parsed;
+      } else {
+        // semear opcionalmente
+        localStorage.setItem('users', JSON.stringify(mockUsers || []));
+        localUsers = mockUsers || [];
       }
-    } catch {}
-    const found = (users || []).find(u => u.username === username && u.password === password);
+    } catch {
+      localUsers = mockUsers || [];
+    }
+    const mapByUser = new Map();
+    (mockUsers || []).forEach(usr => { if (usr && usr.username) mapByUser.set(String(usr.username).toLowerCase(), usr); });
+    (localUsers || []).forEach(usr => { if (usr && usr.username) mapByUser.set(String(usr.username).toLowerCase(), usr); });
+    const candidate = mapByUser.get(u.toLowerCase());
+    const found = candidate && String(candidate.password) === p ? candidate : null;
     if (!found) {
       setError('Credenciais inválidas');
       return;
@@ -47,7 +60,7 @@ const Login = ({ onLogin }) => {
   return (
     <div style={{
       minHeight: '100vh',
-      backgroundColor: '#1f2937',
+      backgroundColor: '#ffffff',
       display: 'flex',
       alignItems: isMobile ? 'flex-start' : 'center',
       justifyContent: 'center',
@@ -81,13 +94,13 @@ const Login = ({ onLogin }) => {
           <h1 style={{ 
             fontSize: isMobile ? '1.5rem' : '1.875rem', 
             fontWeight: 'bold', 
-            color: 'white', 
+            color: '#1f2937', 
             marginBottom: '0.5rem' 
           }}>
             MALABO MICROCRÉDITO
           </h1>
           <p style={{ 
-            color: '#d1d5db',
+            color: '#6b7280',
             fontSize: isMobile ? '0.875rem' : '1rem'
           }}>
             SISTEMA DE GESTÃO DE MICROCRÉDITO
@@ -96,9 +109,11 @@ const Login = ({ onLogin }) => {
 
         {/* Login Form */}
         <div style={{
-          backgroundColor: '#374151',
-          borderRadius: '0.5rem',
-          padding: isMobile ? '1.5rem' : '2rem'
+          backgroundColor: '#ffffff',
+          borderRadius: '0.75rem',
+          padding: isMobile ? '1.5rem' : '2rem',
+          border: '1px solid #e5e7eb',
+          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
         }}>
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             {/* Username Field */}
@@ -107,11 +122,12 @@ const Login = ({ onLogin }) => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.75rem',
-                backgroundColor: '#4b5563',
+                backgroundColor: '#ffffff',
                 borderRadius: '0.5rem',
-                padding: isMobile ? '0.875rem 0.75rem' : '0.75rem 1rem'
+                padding: isMobile ? '0.875rem 0.75rem' : '0.75rem 1rem',
+                border: '1px solid #d1d5db'
               }}>
-                <User style={{ width: '1.25rem', height: '1.25rem', color: '#9ca3af' }} />
+                <User style={{ width: '1.25rem', height: '1.25rem', color: '#6b7280' }} />
                 <input
                   type="text"
                   placeholder="Usuário"
@@ -119,7 +135,7 @@ const Login = ({ onLogin }) => {
                   onChange={(e) => setUsername(e.target.value)}
                   style={{
                     backgroundColor: 'transparent',
-                    color: 'white',
+                    color: '#1f2937',
                     flex: 1,
                     border: 'none',
                     outline: 'none',
@@ -136,19 +152,20 @@ const Login = ({ onLogin }) => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.75rem',
-                backgroundColor: '#4b5563',
+                backgroundColor: '#ffffff',
                 borderRadius: '0.5rem',
-                padding: isMobile ? '0.875rem 0.75rem' : '0.75rem 1rem'
+                padding: isMobile ? '0.875rem 0.75rem' : '0.75rem 1rem',
+                border: '1px solid #d1d5db'
               }}>
-                <Lock style={{ width: '1.25rem', height: '1.25rem', color: '#9ca3af' }} />
+                <Lock style={{ width: '1.25rem', height: '1.25rem', color: '#6b7280' }} />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   placeholder="Senha"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   style={{
                     backgroundColor: 'transparent',
-                    color: 'white',
+                    color: '#1f2937',
                     flex: 1,
                     border: 'none',
                     outline: 'none',
@@ -156,11 +173,35 @@ const Login = ({ onLogin }) => {
                   }}
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    padding: 0,
+                    marginLeft: '0.25rem',
+                    cursor: 'pointer',
+                    color: '#6b7280',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.color = '#374151'}
+                  onMouseOut={(e) => e.currentTarget.style.color = '#6b7280'}
+                >
+                  {showPassword ? (
+                    <EyeOff style={{ width: '1.125rem', height: '1.125rem' }} />
+                  ) : (
+                    <Eye style={{ width: '1.125rem', height: '1.125rem' }} />
+                  )}
+                </button>
               </div>
             </div>
 
             {error && (
-              <div style={{ color: '#fca5a5', fontSize: '0.875rem' }}>{error}</div>
+              <div style={{ color: '#ef4444', fontSize: '0.875rem' }}>{error}</div>
             )}
 
             {/* Login Button */}
@@ -187,7 +228,7 @@ const Login = ({ onLogin }) => {
             {/* Forgot Password */}
             <div style={{ textAlign: 'center' }}>
               <a href="#" style={{ 
-                color: 'white', 
+                color: '#2563eb', 
                 fontSize: isMobile ? '1rem' : '0.875rem',
                 textDecoration: 'none',
                 transition: 'opacity 0.2s'
