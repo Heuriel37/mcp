@@ -16,6 +16,8 @@ const MemberManagement = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [memberToDelete, setMemberToDelete] = useState(null);
   const [toast, setToast] = useState({ show: false, message: '', type: 'info' });
+  const [searchQuery, setSearchQuery] = useState('');
+  const role = (() => { try { return localStorage.getItem('role') || 'admin'; } catch { return 'admin'; } })();
 
   const handleAddMember = (e) => {
     e.preventDefault();
@@ -101,6 +103,14 @@ const MemberManagement = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  const normalizedSearch = searchQuery.trim().toLowerCase();
+  const filteredMembers = localMembers.filter((m) => {
+    const name = (m.name || '').toLowerCase();
+    const number = String(m.memberNumber || '').toLowerCase();
+    if (!normalizedSearch) return true;
+    return name.includes(normalizedSearch) || number.includes(normalizedSearch);
+  });
+
   return (
     <div style={{ 
       display: 'flex', 
@@ -124,30 +134,68 @@ const MemberManagement = () => {
         </h1>
       </div>
 
-      {/* Add Member Button */}
-      <div>
-        <button
-          onClick={() => setShowAddForm(true)}
-          style={{
-            backgroundColor: '#2563eb',
-            color: 'white',
-            padding: '0.5rem 1rem',
-            borderRadius: '0.5rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            border: 'none',
-            cursor: 'pointer',
-            fontSize: '0.875rem',
-            fontWeight: '500',
-            transition: 'background-color 0.2s'
-          }}
-          onMouseOver={(e) => e.target.style.backgroundColor = '#1d4ed8'}
-          onMouseOut={(e) => e.target.style.backgroundColor = '#2563eb'}
-        >
-          <Plus style={{ width: '1.25rem', height: '1.25rem' }} />
-          <span>Adicionar Membro</span>
-        </button>
+      {/* Add Member Button (apenas admin/tecnico) */}
+      {(['admin','tecnico'].includes(role)) && (
+        <div>
+          <button
+            onClick={() => setShowAddForm(true)}
+            style={{
+              backgroundColor: '#2563eb',
+              color: 'white',
+              padding: '0.5rem 1rem',
+              borderRadius: '0.5rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '0.875rem',
+              fontWeight: '500',
+              transition: 'background-color 0.2s'
+            }}
+            onMouseOver={(e) => e.target.style.backgroundColor = '#1d4ed8'}
+            onMouseOut={(e) => e.target.style.backgroundColor = '#2563eb'}
+          >
+            <Plus style={{ width: '1.25rem', height: '1.25rem' }} />
+            <span>Adicionar Membro</span>
+          </button>
+        </div>
+      )}
+
+      {/* Search Member */}
+      <div style={{
+        backgroundColor: '#ffffff',
+        borderRadius: '0.75rem',
+        padding: isMobile ? '1rem' : '1.5rem',
+        border: '1px solid #e5e7eb',
+        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
+      }}>
+        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '0.75rem', alignItems: isMobile ? 'stretch' : 'center' }}>
+          <label style={{ 
+            color: '#6b7280', 
+            fontSize: isMobile ? '0.75rem' : '0.875rem', 
+            fontWeight: '500', 
+            minWidth: isMobile ? 'auto' : '10rem'
+          }}>
+            Buscar membro (nome ou nº)
+          </label>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Ex.: João ou 12345"
+            style={{
+              flex: 1,
+              backgroundColor: '#ffffff',
+              color: '#1f2937',
+              padding: '0.75rem',
+              borderRadius: '0.5rem',
+              border: '1px solid #d1d5db',
+              fontSize: isMobile ? '0.75rem' : '0.875rem',
+              outline: 'none'
+            }}
+          />
+        </div>
       </div>
 
       {/* Add Member Form Modal */}
@@ -310,7 +358,7 @@ const MemberManagement = () => {
         gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(300px, 1fr))',
         gap: '1.5rem'
       }}>
-        {localMembers.map((member) => (
+        {filteredMembers.map((member) => (
           <div key={member.id} style={{
             backgroundColor: '#ffffff',
             borderRadius: '0.75rem',
@@ -362,38 +410,42 @@ const MemberManagement = () => {
                 >
                   <Link style={{ width: '1rem', height: '1rem' }} />
                 </button>
-                <button
-                  onClick={() => handleEditMember(member)}
-                  style={{
-                    color: '#6b7280',
-                    backgroundColor: 'transparent',
-                    border: 'none',
-                    cursor: 'pointer',
-                    padding: '0.25rem',
-                    borderRadius: '0.25rem',
-                    transition: 'color 0.2s'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.color = '#374151'}
-                  onMouseOut={(e) => e.currentTarget.style.color = '#6b7280'}
-                >
-                  <Edit style={{ width: '1rem', height: '1rem' }} />
-                </button>
-                <button
-                  onClick={() => handleDeleteMember(member)}
-                  style={{
-                    color: '#6b7280',
-                    backgroundColor: 'transparent',
-                    border: 'none',
-                    cursor: 'pointer',
-                    padding: '0.25rem',
-                    borderRadius: '0.25rem',
-                    transition: 'color 0.2s'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.color = '#ef4444'}
-                  onMouseOut={(e) => e.currentTarget.style.color = '#6b7280'}
-                >
-                  <Trash2 style={{ width: '1rem', height: '1rem' }} />
-                </button>
+                {(['admin','tecnico'].includes(role)) && (
+                  <>
+                    <button
+                      onClick={() => handleEditMember(member)}
+                      style={{
+                        color: '#6b7280',
+                        backgroundColor: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: '0.25rem',
+                        borderRadius: '0.25rem',
+                        transition: 'color 0.2s'
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.color = '#374151'}
+                      onMouseOut={(e) => e.currentTarget.style.color = '#6b7280'}
+                    >
+                      <Edit style={{ width: '1rem', height: '1rem' }} />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteMember(member)}
+                      style={{
+                        color: '#6b7280',
+                        backgroundColor: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: '0.25rem',
+                        borderRadius: '0.25rem',
+                        transition: 'color 0.2s'
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.color = '#ef4444'}
+                      onMouseOut={(e) => e.currentTarget.style.color = '#6b7280'}
+                    >
+                      <Trash2 style={{ width: '1rem', height: '1rem' }} />
+                    </button>
+                  </>
+                )}
               </div>
               {/* Status Toggle Switch */}
               <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>

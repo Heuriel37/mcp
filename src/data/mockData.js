@@ -1,5 +1,12 @@
 // Dados estáticos para o sistema Malabo Microcrédito
 
+export const users = [
+  { id: 1, username: 'admin', password: 'admin123', role: 'admin', name: 'Administrador' },
+  { id: 2, username: 'tecnico', password: 'tecnico123', role: 'tecnico', name: 'Técnico Adm.' },
+  { id: 3, username: 'agente', password: 'agente123', role: 'agente', name: 'Agente de Campo' },
+  { id: 4, username: 'cliente', password: 'cliente123', role: 'cliente', name: 'Cliente' }
+];
+
 export const members = [
   {
     id: 1,
@@ -31,33 +38,6 @@ export const members = [
   }
 ];
 
-export const savings = [
-  {
-    id: 1,
-    member: "Joaquim",
-    date: "22/02/2023",
-    amount: 1500.00
-  },
-  {
-    id: 2,
-    member: "Maria", 
-    date: "15/02/2023",
-    amount: 750.00
-  },
-  {
-    id: 3,
-    member: "Luis",
-    date: "10/01/2023", 
-    amount: 1200.00
-  },
-  {
-    id: 4,
-    member: "Inês",
-    date: "05/12/2022",
-    amount: 500.00
-  }
-];
-
 export const loans = [
   {
     id: 1,
@@ -83,6 +63,12 @@ export const loans = [
     dueDate: "05/03/2023", 
     status: "Em dia"
   }
+];
+
+export const payments = [
+  { id: 1, loanId: 1, date: "25/02/2023", amount: 300.00 },
+  { id: 2, loanId: 1, date: "20/03/2023", amount: 300.00 },
+  { id: 3, loanId: 2, date: "15/01/2023", amount: 100.00 }
 ];
 
 export const fines = [
@@ -125,7 +111,6 @@ export const profitSharing = [
 ];
 
 export const dashboardData = {
-  totalSaved: 12500,
   totalLoaned: 4200,
   upcomingPayments: 1500,
   monthlyEvolution: [
@@ -137,11 +122,6 @@ export const dashboardData = {
     { month: "Jun", value: 6000 },
     { month: "Jul", value: 8000 },
     { month: "Ago", value: 9500 }
-  ],
-  recentSavings: [
-    { member: "Joaquim", date: "14/08/2025", amount: 5000 },
-    { member: "Maria", date: "10/08/2025", amount: 750 },
-    { member: "Inês", date: "06/08/2025", amount: 400 }
   ],
   alerts: [
     { type: "meeting", message: "Reunião: 20/08/2025" },

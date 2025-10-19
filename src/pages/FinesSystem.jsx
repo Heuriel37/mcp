@@ -5,6 +5,14 @@ import { members, fines } from '../data/mockData';
 const FinesSystem = () => {
   const [selectedMember, setSelectedMember] = useState('');
   const [fineAmount, setFineAmount] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -15,13 +23,21 @@ const FinesSystem = () => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+    <div style={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      gap: isMobile ? '1rem' : '2rem',
+      backgroundColor: '#ffffff',
+      minHeight: '100vh',
+      padding: isMobile ? '1rem' : '2rem'
+    }}>
       {/* Header */}
       <div>
         <h1 style={{ 
-          fontSize: '1.875rem', 
+          fontSize: isMobile ? '1.5rem' : '2rem', 
           fontWeight: 'bold', 
-          color: 'white' 
+          color: '#1f2937',
+          margin: 0
         }}>
           Multas e Penalizações
         </h1>
@@ -29,18 +45,19 @@ const FinesSystem = () => {
 
       {/* Fine Form */}
       <div style={{
-        backgroundColor: '#1f2937',
-        borderRadius: '0.5rem',
-        padding: '1.5rem',
-        border: '1px solid #374151'
+        backgroundColor: '#ffffff',
+        borderRadius: '0.75rem',
+        padding: isMobile ? '1rem' : '1.5rem',
+        border: '1px solid #e5e7eb',
+        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
       }}>
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '1rem' : '1.5rem' }}>
           {/* Member Selection */}
           <div>
             <label style={{ 
               display: 'block', 
-              color: '#d1d5db', 
-              fontSize: '0.875rem', 
+              color: '#6b7280', 
+              fontSize: isMobile ? '0.75rem' : '0.875rem', 
               fontWeight: '500', 
               marginBottom: '0.5rem' 
             }}>
@@ -52,12 +69,12 @@ const FinesSystem = () => {
                 onChange={(e) => setSelectedMember(e.target.value)}
                 style={{
                   width: '100%',
-                  backgroundColor: '#374151',
-                  color: 'white',
+                  backgroundColor: '#ffffff',
+                  color: '#1f2937',
                   padding: '0.75rem 2.5rem 0.75rem 1rem',
                   borderRadius: '0.5rem',
-                  border: '1px solid #4b5563',
-                  fontSize: '0.875rem',
+                  border: '1px solid #e5e7eb',
+                  fontSize: isMobile ? '0.75rem' : '0.875rem',
                   outline: 'none',
                   appearance: 'none',
                   cursor: 'pointer'
@@ -76,9 +93,9 @@ const FinesSystem = () => {
                 right: '0.75rem',
                 top: '50%',
                 transform: 'translateY(-50%)',
-                width: '1.25rem',
-                height: '1.25rem',
-                color: '#9ca3af',
+                width: isMobile ? '1rem' : '1.25rem',
+                height: isMobile ? '1rem' : '1.25rem',
+                color: '#6b7280',
                 pointerEvents: 'none'
               }} />
             </div>
@@ -88,8 +105,8 @@ const FinesSystem = () => {
           <div>
             <label style={{ 
               display: 'block', 
-              color: '#d1d5db', 
-              fontSize: '0.875rem', 
+              color: '#6b7280', 
+              fontSize: isMobile ? '0.75rem' : '0.875rem', 
               fontWeight: '500', 
               marginBottom: '0.5rem' 
             }}>
@@ -101,12 +118,12 @@ const FinesSystem = () => {
               onChange={(e) => setFineAmount(Number(e.target.value))}
               style={{
                 width: '100%',
-                backgroundColor: '#374151',
-                color: 'white',
+                backgroundColor: '#ffffff',
+                color: '#1f2937',
                 padding: '0.75rem 1rem',
                 borderRadius: '0.5rem',
-                border: '1px solid #4b5563',
-                fontSize: '0.875rem',
+                border: '1px solid #e5e7eb',
+                fontSize: isMobile ? '0.75rem' : '0.875rem',
                 outline: 'none'
               }}
               placeholder="0"
@@ -119,12 +136,12 @@ const FinesSystem = () => {
             type="submit"
             style={{
               backgroundColor: '#2563eb',
-              color: 'white',
-              padding: '0.75rem 1.5rem',
+              color: '#ffffff',
+              padding: isMobile ? '0.5rem 1rem' : '0.75rem 1.5rem',
               borderRadius: '0.5rem',
               border: 'none',
               cursor: 'pointer',
-              fontSize: '0.875rem',
+              fontSize: isMobile ? '0.75rem' : '0.875rem',
               fontWeight: '500',
               alignSelf: 'flex-start',
               transition: 'background-color 0.2s'
@@ -139,15 +156,16 @@ const FinesSystem = () => {
 
       {/* Fines History */}
       <div style={{
-        backgroundColor: '#1f2937',
-        borderRadius: '0.5rem',
-        padding: '1.5rem',
-        border: '1px solid #374151'
+        backgroundColor: '#ffffff',
+        borderRadius: '0.75rem',
+        padding: isMobile ? '1rem' : '1.5rem',
+        border: '1px solid #e5e7eb',
+        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
       }}>
         <h3 style={{ 
-          fontSize: '1.125rem', 
+          fontSize: isMobile ? '1rem' : '1.125rem', 
           fontWeight: '600', 
-          color: 'white', 
+          color: '#1f2937', 
           marginBottom: '1rem' 
         }}>
           Histórico de Penalizações Aplicadas
@@ -155,30 +173,30 @@ const FinesSystem = () => {
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%' }}>
             <thead>
-              <tr style={{ borderBottom: '1px solid #374151' }}>
+              <tr style={{ borderBottom: '1px solid #e5e7eb' }}>
                 <th style={{ 
                   textAlign: 'left', 
-                  color: '#9ca3af', 
-                  padding: '0.75rem 0',
-                  fontSize: '0.875rem',
+                  color: '#6b7280', 
+                  padding: isMobile ? '0.5rem 0' : '0.75rem 0',
+                  fontSize: isMobile ? '0.75rem' : '0.875rem',
                   fontWeight: '500'
                 }}>
                   Membro
                 </th>
                 <th style={{ 
                   textAlign: 'left', 
-                  color: '#9ca3af', 
-                  padding: '0.75rem 0',
-                  fontSize: '0.875rem',
+                  color: '#6b7280', 
+                  padding: isMobile ? '0.5rem 0' : '0.75rem 0',
+                  fontSize: isMobile ? '0.75rem' : '0.875rem',
                   fontWeight: '500'
                 }}>
                   Motivo
                 </th>
                 <th style={{ 
                   textAlign: 'left', 
-                  color: '#9ca3af', 
-                  padding: '0.75rem 0',
-                  fontSize: '0.875rem',
+                  color: '#6b7280', 
+                  padding: isMobile ? '0.5rem 0' : '0.75rem 0',
+                  fontSize: isMobile ? '0.75rem' : '0.875rem',
                   fontWeight: '500'
                 }}>
                   Valor
@@ -187,25 +205,25 @@ const FinesSystem = () => {
             </thead>
             <tbody>
               {fines.map((fine, index) => (
-                <tr key={index} style={{ borderBottom: '1px solid #374151' }}>
+                <tr key={index} style={{ borderBottom: '1px solid #e5e7eb' }}>
                   <td style={{ 
-                    color: 'white', 
-                    padding: '0.75rem 0',
-                    fontSize: '0.875rem'
+                    color: '#1f2937', 
+                    padding: isMobile ? '0.5rem 0' : '0.75rem 0',
+                    fontSize: isMobile ? '0.75rem' : '0.875rem'
                   }}>
                     {fine.member}
                   </td>
                   <td style={{ 
-                    color: '#d1d5db', 
-                    padding: '0.75rem 0',
-                    fontSize: '0.875rem'
+                    color: '#6b7280', 
+                    padding: isMobile ? '0.5rem 0' : '0.75rem 0',
+                    fontSize: isMobile ? '0.75rem' : '0.875rem'
                   }}>
                     {fine.reason}
                   </td>
                   <td style={{ 
-                    color: 'white', 
-                    padding: '0.75rem 0',
-                    fontSize: '0.875rem'
+                    color: '#1f2937', 
+                    padding: isMobile ? '0.5rem 0' : '0.75rem 0',
+                    fontSize: isMobile ? '0.75rem' : '0.875rem'
                   }}>
                     MT {fine.amount.toLocaleString()}
                   </td>
@@ -220,3 +238,4 @@ const FinesSystem = () => {
 };
 
 export default FinesSystem;
+

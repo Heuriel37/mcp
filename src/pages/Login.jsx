@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Leaf, User, Lock } from 'lucide-react';
+import { users as mockUsers } from '../data/mockData';
 import '../index.css';
 
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -20,10 +22,26 @@ const Login = ({ onLogin }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Simular login - aceita qualquer credencial
-    if (username && password) {
-      onLogin();
+    setError('');
+    if (!username || !password) return;
+    let users = mockUsers || [];
+    try {
+      const raw = localStorage.getItem('users');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) users = parsed;
+      }
+    } catch {}
+    const found = (users || []).find(u => u.username === username && u.password === password);
+    if (!found) {
+      setError('Credenciais inválidas');
+      return;
     }
+    try {
+      localStorage.setItem('role', found.role);
+      localStorage.setItem('userName', found.name || found.username);
+    } catch {}
+    onLogin();
   };
 
   return (
@@ -140,6 +158,10 @@ const Login = ({ onLogin }) => {
                 />
               </div>
             </div>
+
+            {error && (
+              <div style={{ color: '#fca5a5', fontSize: '0.875rem' }}>{error}</div>
+            )}
 
             {/* Login Button */}
             <button

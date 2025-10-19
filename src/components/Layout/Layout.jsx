@@ -24,14 +24,10 @@ const Layout = ({ children }) => {
         return 'Dashboard';
       case '/members':
         return 'Gestão de Membros';
-      case '/savings':
-        return 'Sistema de Poupanças';
       case '/loans':
         return 'Gestão de Empréstimos';
-      case '/fines':
-        return 'Sistema de Multas';
-      case '/profit-sharing':
-        return 'Partilha de Lucros';
+      case '/reports':
+        return 'Relatórios';
       default:
         return 'Dashboard';
     }

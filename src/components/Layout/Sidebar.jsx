@@ -3,10 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Users, 
-  BookOpen, 
   CreditCard, 
-  AlertTriangle,
-  Leaf,
   LogOut
 } from 'lucide-react';
 
@@ -18,10 +15,32 @@ const Sidebar = ({ isMobile, sidebarOpen, setSidebarOpen }) => {
   const menuItems = [
     { path: '/', icon: LayoutDashboard, label: 'Dashboard' },
     { path: '/members', icon: Users, label: 'Gestão de Membros' },
-    { path: '/savings', icon: BookOpen, label: 'Registo de Poupanças' },
     { path: '/loans', icon: CreditCard, label: 'Gestão de Empréstimos' },
-    { path: '/fines', icon: AlertTriangle, label: 'Multas e Penalizações' }
+    { path: '/reports', icon: LayoutDashboard, label: 'Relatórios' },
+    { path: '/users', icon: Users, label: 'Utilizadores' }
   ];
+
+  const role = (() => {
+    try { return localStorage.getItem('role') || 'admin'; } catch { return 'admin'; }
+  })();
+
+  const allowedByRole = (item) => {
+    switch (role) {
+      case 'admin':
+        return true; // Admin vê todos
+      case 'tecnico':
+        // Técnico não vê Utilizadores
+        return item.path !== '/users';
+      case 'agente':
+        return item.path === '/' || item.path === '/loans' || item.path === '/reports';
+      case 'cliente':
+        return item.path === '/';
+      default:
+        return item.path === '/';
+    }
+  };
+
+  const visibleMenu = menuItems.filter(allowedByRole);
 
   return (
     <div style={{
@@ -50,13 +69,14 @@ const Sidebar = ({ isMobile, sidebarOpen, setSidebarOpen }) => {
         }}>
           <div style={{
             width: '2.5rem',
-            height: '1.5rem',
+            height: '2.5rem',
             backgroundColor: '#ffffff',
-            borderRadius: '0.25rem',
+            borderRadius: '9999px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            border: '1px solid #e5e7eb'
+            border: '1px solid #e5e7eb',
+            overflow: 'hidden'
           }}>
             <img 
               src="/malabo-logo.svg" 
@@ -84,7 +104,7 @@ const Sidebar = ({ isMobile, sidebarOpen, setSidebarOpen }) => {
         padding: '1rem'
       }}>
         <ul style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-          {menuItems.map((item) => {
+          {visibleMenu.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path;
             
@@ -206,7 +226,10 @@ const Sidebar = ({ isMobile, sidebarOpen, setSidebarOpen }) => {
             <div style={{ display: 'flex', gap: '0.75rem' }}>
               <button
                 onClick={() => {
-                  localStorage.removeItem('isLoggedIn');
+                  try {
+                    localStorage.removeItem('isLoggedIn');
+                    localStorage.removeItem('role');
+                  } catch {}
                   window.location.reload();
                 }}
                 style={{

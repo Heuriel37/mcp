@@ -25,6 +25,7 @@ const LoanManagement = () => {
   };
 
   const [isMobile, setIsMobile] = useState(false);
+  const role = (() => { try { return localStorage.getItem('role') || 'admin'; } catch { return 'admin'; } })();
 
   useEffect(() => {
     const checkMobile = () => {
@@ -36,6 +37,8 @@ const LoanManagement = () => {
     
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  
 
   return (
     <div style={{ 
@@ -60,34 +63,36 @@ const LoanManagement = () => {
         </h1>
       </div>
 
-      {/* Add Loan Button */}
-      <div>
-        <button
-          onClick={() => setShowLoanForm(true)}
-          style={{
-            backgroundColor: '#2563eb',
-            color: 'white',
-            padding: '0.5rem 1rem',
-            borderRadius: '0.5rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            border: 'none',
-            cursor: 'pointer',
-            fontSize: '0.875rem',
-            fontWeight: '500',
-            transition: 'background-color 0.2s'
-          }}
-          onMouseOver={(e) => e.target.style.backgroundColor = '#1d4ed8'}
-          onMouseOut={(e) => e.target.style.backgroundColor = '#2563eb'}
-        >
-          <Plus style={{ width: '1.25rem', height: '1.25rem' }} />
-          <span>Novo Empréstimo</span>
-        </button>
-      </div>
+      {/* Add Loan Button (apenas admin/tecnico) */}
+      {(['admin','tecnico'].includes(role)) && (
+        <div>
+          <button
+            onClick={() => setShowLoanForm(true)}
+            style={{
+              backgroundColor: '#2563eb',
+              color: 'white',
+              padding: '0.5rem 1rem',
+              borderRadius: '0.5rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '0.875rem',
+              fontWeight: '500',
+              transition: 'background-color 0.2s'
+            }}
+            onMouseOver={(e) => e.target.style.backgroundColor = '#1d4ed8'}
+            onMouseOut={(e) => e.target.style.backgroundColor = '#2563eb'}
+          >
+            <Plus style={{ width: '1.25rem', height: '1.25rem' }} />
+            <span>Novo Empréstimo</span>
+          </button>
+        </div>
+      )}
 
       {/* Loan Form Modal */}
-      {showLoanForm && (
+      {showLoanForm && (['admin','tecnico'].includes(role)) && (
         <div style={{
           position: 'fixed',
           top: 0,

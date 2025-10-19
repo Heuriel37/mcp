@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Calendar, AlertCircle } from 'lucide-react';
-import { dashboardData } from '../data/mockData';
+import { dashboardData, loans, payments } from '../data/mockData';
 
 const Dashboard = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -16,6 +16,29 @@ const Dashboard = () => {
     
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  const parsePtDate = (str) => {
+    const parts = (str || '').split('/');
+    if (parts.length !== 3) return null;
+    const [dd, mm, yyyy] = parts.map((p) => parseInt(p, 10));
+    if (!dd || !mm || !yyyy) return null;
+    return new Date(yyyy, mm - 1, dd);
+  };
+
+  const totals = useMemo(() => {
+    const totalLoaned = (loans || []).reduce((s, l) => s + (Number(l.amount) || 0), 0);
+    const totalPaid = (payments || []).reduce((s, p) => s + (Number(p.amount) || 0), 0);
+    const today = new Date();
+    const overdueLoans = (loans || []).filter((l) => {
+      const d = parsePtDate(l.dueDate);
+      return d && d < today; 
+    });
+    const overdueCount = overdueLoans.length;
+    const overdueAmount = overdueLoans.reduce((s, l) => s + (Number(l.amount) || 0), 0);
+    return { totalLoaned, totalPaid, overdueCount, overdueAmount };
+  }, []);
+
+  const role = (() => { try { return localStorage.getItem('role') || 'admin'; } catch { return 'admin'; } })();
 
   return (
     <div style={{ 
@@ -41,81 +64,64 @@ const Dashboard = () => {
         </h1>
       </div>
 
-      {/* Metrics Cards */}
+      {/* Metrics Cards (por perfil) */}
       <div style={{ 
         display: 'grid', 
         gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(250px, 1fr))', 
         gap: isMobile ? '1rem' : '1.5rem' 
       }}>
-        <div style={{
-          backgroundColor: '#ffffff',
-          borderRadius: '0.75rem',
-          padding: isMobile ? '1rem' : '1.5rem',
-          border: '1px solid #e5e7eb',
-          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
-        }}>
-          <h3 style={{ 
-            color: '#6b7280', 
-            fontSize: isMobile ? '0.75rem' : '0.875rem', 
-            fontWeight: '500', 
-            marginBottom: '0.5rem' 
+        {((role === 'admin') || (role === 'tecnico')) && (
+          <>
+            <div style={{
+              backgroundColor: '#ffffff', borderRadius: '0.75rem', padding: isMobile ? '1rem' : '1.5rem',
+              border: '1px solid #e5e7eb', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
+            }}>
+              <h3 style={{ color: '#6b7280', fontSize: isMobile ? '0.75rem' : '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Total Emprestado</h3>
+              <p style={{ fontSize: isMobile ? '1.25rem' : '1.5rem', fontWeight: 'bold', color: '#10b981' }}>MT {totals.totalLoaned.toLocaleString()}</p>
+            </div>
+            <div style={{
+              backgroundColor: '#ffffff', borderRadius: '0.75rem', padding: isMobile ? '1rem' : '1.5rem',
+              border: '1px solid #e5e7eb', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
+            }}>
+              <h3 style={{ color: '#6b7280', fontSize: isMobile ? '0.75rem' : '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Em Atraso (Qtd)</h3>
+              <p style={{ fontSize: isMobile ? '1.25rem' : '1.5rem', fontWeight: 'bold', color: '#10b981' }}>{totals.overdueCount}</p>
+            </div>
+            <div style={{
+              backgroundColor: '#ffffff', borderRadius: '0.75rem', padding: isMobile ? '1rem' : '1.5rem',
+              border: '1px solid #e5e7eb', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
+            }}>
+              <h3 style={{ color: '#6b7280', fontSize: isMobile ? '0.75rem' : '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Em Atraso (Montante)</h3>
+              <p style={{ fontSize: isMobile ? '1.25rem' : '1.5rem', fontWeight: 'bold', color: '#ef4444' }}>MT {totals.overdueAmount.toLocaleString()}</p>
+            </div>
+          </>
+        )}
+        {(role === 'agente') && (
+          <>
+            <div style={{
+              backgroundColor: '#ffffff', borderRadius: '0.75rem', padding: isMobile ? '1rem' : '1.5rem',
+              border: '1px solid #e5e7eb', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
+            }}>
+              <h3 style={{ color: '#6b7280', fontSize: isMobile ? '0.75rem' : '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Em Atraso (Qtd)</h3>
+              <p style={{ fontSize: isMobile ? '1.25rem' : '1.5rem', fontWeight: 'bold', color: '#10b981' }}>{totals.overdueCount}</p>
+            </div>
+            <div style={{
+              backgroundColor: '#ffffff', borderRadius: '0.75rem', padding: isMobile ? '1rem' : '1.5rem',
+              border: '1px solid #e5e7eb', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
+            }}>
+              <h3 style={{ color: '#6b7280', fontSize: isMobile ? '0.75rem' : '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Em Atraso (Montante)</h3>
+              <p style={{ fontSize: isMobile ? '1.25rem' : '1.5rem', fontWeight: 'bold', color: '#ef4444' }}>MT {totals.overdueAmount.toLocaleString()}</p>
+            </div>
+          </>
+        )}
+        {(role === 'cliente') && (
+          <div style={{
+            backgroundColor: '#ffffff', borderRadius: '0.75rem', padding: isMobile ? '1rem' : '1.5rem',
+            border: '1px solid #e5e7eb', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
           }}>
-            Total Poupado
-          </h3>
-          <p style={{ 
-            fontSize: isMobile ? '1.25rem' : '1.5rem', 
-            fontWeight: 'bold', 
-            color: '#10b981' 
-          }}>
-            MT {dashboardData.totalSaved.toLocaleString()}
-          </p>
-        </div>
-        <div style={{
-          backgroundColor: '#ffffff',
-          borderRadius: '0.75rem',
-          padding: isMobile ? '1rem' : '1.5rem',
-          border: '1px solid #e5e7eb',
-          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
-        }}>
-          <h3 style={{ 
-            color: '#6b7280', 
-            fontSize: isMobile ? '0.75rem' : '0.875rem', 
-            fontWeight: '500', 
-            marginBottom: '0.5rem' 
-          }}>
-            Total Emprestado
-          </h3>
-          <p style={{ 
-            fontSize: isMobile ? '1.25rem' : '1.5rem', 
-            fontWeight: 'bold', 
-            color: '#10b981' 
-          }}>
-            MT {dashboardData.totalLoaned.toLocaleString()}
-          </p>
-        </div>
-        <div style={{
-          backgroundColor: '#ffffff',
-          borderRadius: '0.75rem',
-          padding: isMobile ? '1rem' : '1.5rem',
-          border: '1px solid #e5e7eb',
-          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
-        }}>
-          <h3 style={{ 
-            color: '#6b7280', 
-            fontSize: isMobile ? '0.75rem' : '0.875rem', 
-            fontWeight: '500', 
-            marginBottom: '0.5rem' 
-          }}>
-            Próximos Pagamentos
-          </h3>
-          <p style={{ 
-            fontSize: isMobile ? '1.25rem' : '1.5rem', 
-            fontWeight: 'bold', 
-            color: '#10b981' 
-          }}>
-            MT {dashboardData.upcomingPayments.toLocaleString()}
-          </p>
-        </div>
+            <h3 style={{ color: '#6b7280', fontSize: isMobile ? '0.75rem' : '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Em Atraso (Qtd)</h3>
+            <p style={{ fontSize: isMobile ? '1.25rem' : '1.5rem', fontWeight: 'bold', color: '#10b981' }}>{totals.overdueCount}</p>
+          </div>
+        )}
       </div>
 
       {/* Charts and Alerts */}
@@ -217,85 +223,6 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Recent Savings Table */}
-      <div style={{
-        backgroundColor: '#ffffff',
-        borderRadius: '0.75rem',
-        padding: '1.5rem',
-        border: '1px solid #e5e7eb',
-        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
-      }}>
-        <h3 style={{ 
-          fontSize: '1.125rem', 
-          fontWeight: '600', 
-          color: '#1f2937', 
-          marginBottom: '1rem' 
-        }}>
-          Registo de Poupanças Recentes
-        </h3>
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%' }}>
-            <thead>
-              <tr style={{ borderBottom: '1px solid #e5e7eb' }}>
-                <th style={{ 
-                  textAlign: 'left', 
-                  color: '#6b7280', 
-                  padding: isMobile ? '0.5rem 0' : '0.75rem 0',
-                  fontSize: isMobile ? '0.75rem' : '0.875rem',
-                  fontWeight: '500'
-                }}>
-                  Membro
-                </th>
-                <th style={{ 
-                  textAlign: 'left', 
-                  color: '#6b7280', 
-                  padding: isMobile ? '0.5rem 0' : '0.75rem 0',
-                  fontSize: isMobile ? '0.75rem' : '0.875rem',
-                  fontWeight: '500'
-                }}>
-                  Data
-                </th>
-                <th style={{ 
-                  textAlign: 'left', 
-                  color: '#6b7280', 
-                  padding: isMobile ? '0.5rem 0' : '0.75rem 0',
-                  fontSize: isMobile ? '0.75rem' : '0.875rem',
-                  fontWeight: '500'
-                }}>
-                  Valor
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {dashboardData.recentSavings.map((saving, index) => (
-                <tr key={index} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                  <td style={{ 
-                    color: '#1f2937', 
-                    padding: isMobile ? '0.5rem 0' : '0.75rem 0',
-                    fontSize: isMobile ? '0.75rem' : '0.875rem'
-                  }}>
-                    {saving.member}
-                  </td>
-                  <td style={{ 
-                    color: '#6b7280', 
-                    padding: isMobile ? '0.5rem 0' : '0.75rem 0',
-                    fontSize: isMobile ? '0.75rem' : '0.875rem'
-                  }}>
-                    {saving.date}
-                  </td>
-                  <td style={{ 
-                    color: '#1f2937', 
-                    padding: isMobile ? '0.5rem 0' : '0.75rem 0',
-                    fontSize: isMobile ? '0.75rem' : '0.875rem'
-                  }}>
-                    MT {saving.amount.toLocaleString()}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
     </div>
   );
 };
