@@ -43,32 +43,32 @@ export const loans = [
     id: 1,
     member: "Joaquim",
     amount: 1000.00,
-    date: "20/02/2023",
-    dueDate: "20/05/2023",
+    date: "20/02/2025",
+    dueDate: "20/05/2025",
     status: "Em dia"
   },
   {
     id: 2,
     member: "Maria",
     amount: 500.00,
-    date: "10/01/2023", 
-    dueDate: "10/04/2023",
+    date: "10/01/2025", 
+    dueDate: "10/04/2025",
     status: "Em atraso"
   },
   {
     id: 3,
     member: "Luis",
     amount: 800.00,
-    date: "05/12/2022",
-    dueDate: "05/03/2023", 
+    date: "05/12/2024",
+    dueDate: "05/03/2025", 
     status: "Em dia"
   }
 ];
 
 export const payments = [
-  { id: 1, loanId: 1, date: "25/02/2023", amount: 300.00 },
-  { id: 2, loanId: 1, date: "20/03/2023", amount: 300.00 },
-  { id: 3, loanId: 2, date: "15/01/2023", amount: 100.00 }
+  { id: 1, loanId: 1, date: "25/02/2025", amount: 300.00 },
+  { id: 2, loanId: 1, date: "20/03/2025", amount: 300.00 },
+  { id: 3, loanId: 2, date: "15/01/2025", amount: 100.00 }
 ];
 
 export const fines = [

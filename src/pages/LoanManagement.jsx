@@ -24,11 +24,48 @@ const LoanManagement = () => {
     setShowLoanForm(false);
   };
 
+  const handleAddAttachment = (loanId, fileList) => {
+    if (!fileList || fileList.length === 0) return;
+    const files = Array.from(fileList).slice(0, 5);
+    const readers = files.map((f, idx) => new Promise((resolve) => {
+      const fr = new FileReader();
+      fr.onload = () => resolve({
+        id: Date.now() + '-' + idx,
+        name: f.name,
+        size: f.size,
+        type: f.type || 'application/octet-stream',
+        uploadedAt: new Date().toLocaleString(),
+        dataUrl: fr.result
+      });
+      fr.readAsDataURL(f);
+    }));
+    Promise.all(readers).then((arr) => {
+      const prev = attachmentsByLoan[String(loanId)] || [];
+      setAttachmentsByLoan({ ...attachmentsByLoan, [String(loanId)]: [...prev, ...arr] });
+    });
+  };
+
+  const handleRemoveAttachment = (loanId, attId) => {
+    const prev = attachmentsByLoan[String(loanId)] || [];
+    setAttachmentsByLoan({ ...attachmentsByLoan, [String(loanId)]: prev.filter(a => a.id !== attId) });
+  };
+
   const [isMobile, setIsMobile] = useState(false);
   const role = (() => { try { return localStorage.getItem('role') || 'admin'; } catch { return 'admin'; } })();
   const [payments, setPayments] = useState(initialPayments || []);
   const [newPaymentByLoan, setNewPaymentByLoan] = useState({});
   const [paymentModalLoanId, setPaymentModalLoanId] = useState(null);
+  const [manageLoanId, setManageLoanId] = useState(null);
+  const [attachmentsByLoan, setAttachmentsByLoan] = useState(() => {
+    try {
+      const raw = localStorage.getItem('loanAttachments');
+      if (raw) {
+        const obj = JSON.parse(raw);
+        return obj && typeof obj === 'object' ? obj : {};
+      }
+    } catch {}
+    return {};
+  });
 
   useEffect(() => {
     const checkMobile = () => {
@@ -40,6 +77,10 @@ const LoanManagement = () => {
     
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  useEffect(() => {
+    try { localStorage.setItem('loanAttachments', JSON.stringify(attachmentsByLoan)); } catch {}
+  }, [attachmentsByLoan]);
 
   const getLoanPayments = (loanId) => payments.filter(p => p.loanId === loanId);
   const getTotalPaid = (loanId) => getLoanPayments(loanId).reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
@@ -455,34 +496,29 @@ const LoanManagement = () => {
                   <span style={{ color: '#6b7280', fontSize: '0.875rem' }}>Sem pagamentos registados.</span>
                 )}
               </div>
-              {(['admin','tecnico','agente'].includes(role)) && (
-                <div style={{ marginTop: '0.75rem' }}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setPaymentModalLoanId(loan.id);
-                      if (!newPaymentByLoan[loan.id]) {
-                        setNewPaymentByLoan({ ...newPaymentByLoan, [loan.id]: { date: '', amount: '' } });
-                      }
-                    }}
-                    style={{
-                      backgroundColor: '#2563eb',
-                      color: '#ffffff',
-                      padding: '0.5rem 1rem',
-                      borderRadius: '0.5rem',
-                      border: '1px solid #1d4ed8',
-                      cursor: 'pointer',
-                      fontSize: '0.875rem',
-                      fontWeight: '500'
-                    }}
-                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#1d4ed8'}
-                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
-                  >
-                    Registar Pagamento
-                  </button>
-                </div>
-              )}
+              {/* Botão de registrar pagamento movido para o modal Gerenciar */}
             </div>
+            {(['admin','tecnico','agente'].includes(role)) && (
+              <div style={{ display:'flex', justifyContent:'flex-end', marginTop:'0.5rem' }}>
+                <button
+                  type="button"
+                  onClick={() => setManageLoanId(loan.id)}
+                  style={{
+                    backgroundColor: '#10b981',
+                    color: '#ffffff',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '0.5rem',
+                    border: '1px solid #059669',
+                    cursor: 'pointer',
+                    fontSize: '0.875rem',
+                    fontWeight: '600',
+                    alignSelf: 'flex-end'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#059669'}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#10b981'}
+                >Gerenciar</button>
+              </div>
+            )}
           </div>
           );
         })}
@@ -518,6 +554,69 @@ const LoanManagement = () => {
                 <button onClick={() => { setPaymentModalLoanId(null); }}
                   style={{ flex: 1, backgroundColor: '#6b7280', color: '#fff', padding: '0.75rem', borderRadius: '0.5rem', border: 'none', cursor: 'pointer', fontSize: '0.875rem', fontWeight: 500 }}>Cancelar</button>
               </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* Modal de Gerenciamento de Anexos */}
+      {manageLoanId !== null && (['admin','tecnico','agente'].includes(role)) && (()=>{
+        const currentLoan = loans.find(l => l.id === manageLoanId);
+        const list = attachmentsByLoan[String(manageLoanId)] || [];
+        const np = newPaymentByLoan[manageLoanId] || { date: '', amount: '' };
+        return (
+          <div style={{ position:'fixed', top:0, left:0, right:0, bottom:0, backgroundColor:'rgba(0,0,0,0.5)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:65 }}>
+            <div style={{ background:'#fff', borderRadius:'0.75rem', padding:'1.5rem', width:'100%', maxWidth:'32rem', margin:'1rem', border:'1px solid #e5e7eb', boxShadow:'0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)' }}>
+              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'0.75rem' }}>
+                <h2 style={{ fontSize:'1.25rem', fontWeight:600, color:'#1f2937', margin:0 }}>Gerenciar Anexos</h2>
+                <button onClick={() => setManageLoanId(null)} style={{ background:'#6b7280', color:'#fff', border:'none', borderRadius:'0.5rem', padding:'0.5rem 0.75rem', cursor:'pointer', fontSize:'0.875rem' }}>Fechar</button>
+              </div>
+              <div style={{ color:'#6b7280', fontSize:'0.875rem', marginBottom:'0.5rem' }}>Empréstimo de <span style={{ color:'#1f2937', fontWeight:600 }}>{currentLoan?.member}</span></div>
+              <div style={{ display:'flex', flexDirection:'column', gap:'0.5rem', marginBottom:'0.75rem' }}>
+                {list.map(a => (
+                  <div key={a.id} style={{ display:'grid', gridTemplateColumns:'1fr auto auto', gap:'0.5rem', alignItems:'center', color:'#374151', fontSize:'0.875rem' }}>
+                    <span title={`${a.name} (${a.size} bytes)`}>{a.name} <span style={{ color:'#6b7280' }}>— {a.uploadedAt}</span></span>
+                    <a href={a.dataUrl || '#'} download={a.name} target="_blank" rel="noreferrer" style={{ background:'#10b981', color:'#fff', textDecoration:'none', borderRadius:'0.5rem', padding:'0.25rem 0.5rem', fontSize:'0.75rem', textAlign:'center' }}>Download</a>
+                    {(['admin','tecnico'].includes(role)) && (
+                      <button onClick={() => handleRemoveAttachment(manageLoanId, a.id)} style={{ background:'#ef4444', color:'#fff', border:'none', borderRadius:'0.5rem', padding:'0.25rem 0.5rem', cursor:'pointer', fontSize:'0.75rem' }}>Remover</button>
+                    )}
+                  </div>
+                ))}
+                {list.length === 0 && (
+                  <div style={{ color:'#6b7280', fontSize:'0.875rem' }}>Sem contratos anexados.</div>
+                )}
+              </div>
+              {(['admin','tecnico'].includes(role)) && (
+                <div style={{ marginBottom:'0.75rem' }}>
+                  <label style={{ display:'inline-block', background:'#2563eb', color:'#fff', padding:'0.5rem 0.75rem', borderRadius:'0.5rem', cursor:'pointer', fontSize:'0.875rem' }}>
+                    Anexar ficheiros
+                    <input type="file" multiple onChange={(e) => { handleAddAttachment(manageLoanId, e.target.files); e.target.value=''; }} style={{ display:'none' }} />
+                  </label>
+                </div>
+              )}
+              {(['admin','tecnico','agente'].includes(role)) && (
+                <div style={{ borderTop:'1px solid #e5e7eb', paddingTop:'0.75rem', marginTop:'0.5rem' }}>
+                  <h3 style={{ margin:0, marginBottom:'0.5rem', fontSize:'1rem', color:'#1f2937', fontWeight:600 }}>Registar Pagamento</h3>
+                  <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'0.5rem' }}>
+                    <div>
+                      <label style={{ display:'block', color:'#374151', fontSize:'0.875rem', fontWeight:500, marginBottom:'0.25rem' }}>Data (DD/MM/AAAA)</label>
+                      <input type="text" value={np.date} onChange={(e)=> setNewPaymentByLoan({ ...newPaymentByLoan, [manageLoanId]: { ...np, date: e.target.value } })}
+                        style={{ width:'100%', background:'#fff', color:'#1f2937', padding:'0.5rem 0.75rem', borderRadius:'0.5rem', border:'1px solid #d1d5db', fontSize:'0.875rem', outline:'none' }} />
+                    </div>
+                    <div>
+                      <label style={{ display:'block', color:'#374151', fontSize:'0.875rem', fontWeight:500, marginBottom:'0.25rem' }}>Valor (MT)</label>
+                      <input type="number" value={np.amount} onChange={(e)=> setNewPaymentByLoan({ ...newPaymentByLoan, [manageLoanId]: { ...np, amount: e.target.value } })}
+                        style={{ width:'100%', background:'#fff', color:'#1f2937', padding:'0.5rem 0.75rem', borderRadius:'0.5rem', border:'1px solid #d1d5db', fontSize:'0.875rem', outline:'none' }} />
+                    </div>
+                  </div>
+                  <div style={{ display:'flex', justifyContent:'flex-end', gap:'0.5rem', marginTop:'0.75rem' }}>
+                    <button onClick={() => { const loan = loans.find(l => l.id === manageLoanId); if (loan) handleAddPayment(loan); }}
+                      style={{ background:'#2563eb', color:'#fff', padding:'0.5rem 1rem', borderRadius:'0.5rem', border:'1px solid #1d4ed8', cursor:'pointer', fontSize:'0.875rem', fontWeight:600 }}
+                      onMouseOver={(e)=> e.currentTarget.style.backgroundColor = '#1d4ed8'}
+                      onMouseOut={(e)=> e.currentTarget.style.backgroundColor = '#2563eb'}>Guardar</button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         );

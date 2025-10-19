@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { users as mockUsers } from '../data/mockData';
+import { users as mockUsers, members } from '../data/mockData';
 
 const safeLoadUsers = () => {
   try {
@@ -34,7 +34,7 @@ const saveUsers = (list) => {
 const UsersManagement = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [list, setList] = useState(safeLoadUsers());
-  const [form, setForm] = useState({ id: null, username: '', password: '', role: 'tecnico', name: '' });
+  const [form, setForm] = useState({ id: null, username: '', password: '', role: 'tecnico', name: '', memberId: null });
   const [editingId, setEditingId] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
@@ -47,16 +47,17 @@ const UsersManagement = () => {
 
   useEffect(() => { saveUsers(list); }, [list]);
 
-  const resetForm = () => setForm({ id: null, username: '', password: '', role: 'tecnico', name: '' });
+  const resetForm = () => setForm({ id: null, username: '', password: '', role: 'tecnico', name: '', memberId: null });
 
   const handleSave = () => {
     if (!form.username || !form.password || !form.role) return;
     if (editingId) {
-      setList(list.map(u => (u.id === editingId ? { ...u, username: form.username, password: form.password, role: form.role, name: form.name || form.username } : u)));
+      setList(list.map(u => (u.id === editingId ? { ...u, username: form.username, password: form.password, role: form.role, name: form.name || form.username, memberId: form.role === 'cliente' ? (form.memberId ? Number(form.memberId) : null) : undefined } : u)));
       setEditingId(null);
     } else {
       const nextId = list.length ? Math.max(...list.map(u => u.id || 0)) + 1 : 1;
       const newUser = { id: nextId, username: form.username, password: form.password, role: form.role, name: form.name || form.username };
+      if (form.role === 'cliente') newUser.memberId = form.memberId ? Number(form.memberId) : null;
       setList([...list, newUser]);
     }
     resetForm();
@@ -65,7 +66,7 @@ const UsersManagement = () => {
 
   const startEdit = (u) => {
     setEditingId(u.id);
-    setForm({ id: u.id, username: u.username, password: u.password, role: u.role, name: u.name });
+    setForm({ id: u.id, username: u.username, password: u.password, role: u.role, name: u.name, memberId: u.memberId || null });
     setShowModal(true);
   };
 
@@ -157,6 +158,17 @@ const UsersManagement = () => {
                   <option value="cliente">Cliente</option>
                 </select>
               </div>
+              {form.role === 'cliente' && (
+                <div>
+                  <label style={{ display: 'block', color: '#374151', fontSize: '0.875rem', fontWeight: 500, marginBottom: '0.5rem' }}>Membro</label>
+                  <select value={form.memberId || ''} onChange={(e) => setForm({ ...form, memberId: e.target.value ? Number(e.target.value) : null })} style={{ width: '100%', backgroundColor: '#ffffff', color: '#1f2937', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid #d1d5db', fontSize: '0.875rem', outline: 'none', appearance: 'none', cursor: 'pointer' }}>
+                    <option value="">Selecione o membro</option>
+                    {(members || []).map(m => (
+                      <option key={m.id} value={m.id}>{m.name} (#{m.memberNumber})</option>
+                    ))}
+                  </select>
+                </div>
+              )}
             </div>
             <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
               <button onClick={handleSave} style={{ flex: 1, backgroundColor: '#2563eb', color: '#fff', padding: '0.75rem', borderRadius: '0.5rem', border: 'none', cursor: 'pointer', fontSize: '0.875rem', fontWeight: 500 }}>{editingId ? 'Atualizar' : 'Adicionar'}</button>

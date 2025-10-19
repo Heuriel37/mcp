@@ -76,6 +76,15 @@ const ClientPortal = () => {
     return new Date(y, m - 1, d);
   };
 
+  const getAttachmentsForLoan = (loanId) => {
+    try {
+      const raw = localStorage.getItem('loanAttachments');
+      if (!raw) return [];
+      const map = JSON.parse(raw) || {};
+      return map[String(loanId)] || [];
+    } catch { return []; }
+  };
+
   // Alerts: vencidos e próximos 7 dias
   const alerts = useMemo(() => {
     const today = new Date();
@@ -159,6 +168,9 @@ const ClientPortal = () => {
   const [editContact, setEditContact] = useState('');
   useEffect(() => { setEditContact(contact); }, [contact]);
 
+  // Modal de detalhes de empréstimo
+  const [detailLoan, setDetailLoan] = useState(null);
+
   const saveContact = () => {
     if (!clientMember) return;
     try {
@@ -209,9 +221,12 @@ const ClientPortal = () => {
             <div style={{ background:'#fff', border:'1px solid #e5e7eb', borderRadius:'0.75rem', padding:'1rem', boxShadow:'0 1px 3px rgba(0,0,0,0.1)' }}>
               <h3 style={{ margin: 0, marginBottom: '0.5rem', color:'#1f2937', fontSize:'1rem', fontWeight:600 }}>Vencimentos Próximos (7 dias)</h3>
               {(alerts.upcoming || []).map((l)=>(
-                <div key={l.id} style={{ display:'flex', justifyContent:'space-between', fontSize:'0.875rem', color:'#374151' }}>
+                <div key={l.id} style={{ display:'grid', gridTemplateColumns:'1fr auto', gap:'0.5rem', alignItems:'center', fontSize:'0.875rem', color:'#374151' }}>
                   <span>Empréstimo #{l.id}</span>
-                  <span>{l.dueDate}</span>
+                  <div style={{ display:'flex', alignItems:'center', gap:'0.5rem' }}>
+                    <span>{l.dueDate}</span>
+                    <button onClick={() => setDetailLoan(l)} style={{ background:'#2563eb', color:'#fff', border:'none', borderRadius:'0.5rem', padding:'0.25rem 0.5rem', cursor:'pointer', fontSize:'0.75rem' }}>Ver detalhes</button>
+                  </div>
                 </div>
               ))}
               {alerts.upcoming.length === 0 && (<div style={{ color:'#6b7280', fontSize:'0.875rem' }}>Sem vencimentos nos próximos 7 dias.</div>)}
@@ -219,9 +234,12 @@ const ClientPortal = () => {
             <div style={{ background:'#fff', border:'1px solid #e5e7eb', borderRadius:'0.75rem', padding:'1rem', boxShadow:'0 1px 3px rgba(0,0,0,0.1)' }}>
               <h3 style={{ margin: 0, marginBottom: '0.5rem', color:'#1f2937', fontSize:'1rem', fontWeight:600 }}>Em Atraso</h3>
               {(alerts.overdue || []).map((l)=>(
-                <div key={l.id} style={{ display:'flex', justifyContent:'space-between', fontSize:'0.875rem', color:'#ef4444' }}>
+                <div key={l.id} style={{ display:'grid', gridTemplateColumns:'1fr auto', gap:'0.5rem', alignItems:'center', fontSize:'0.875rem', color:'#ef4444' }}>
                   <span>Empréstimo #{l.id}</span>
-                  <span>{l.dueDate}</span>
+                  <div style={{ display:'flex', alignItems:'center', gap:'0.5rem' }}>
+                    <span>{l.dueDate}</span>
+                    <button onClick={() => setDetailLoan(l)} style={{ background:'#ef4444', color:'#fff', border:'none', borderRadius:'0.5rem', padding:'0.25rem 0.5rem', cursor:'pointer', fontSize:'0.75rem' }}>Ver detalhes</button>
+                  </div>
                 </div>
               ))}
               {alerts.overdue.length === 0 && (<div style={{ color:'#6b7280', fontSize:'0.875rem' }}>Sem empréstimos em atraso.</div>)}
@@ -294,6 +312,56 @@ const ClientPortal = () => {
             )}
           </div>
         </>
+      )}
+
+      {/* Modal Detalhes do Empréstimo */}
+      {detailLoan && (
+        <div style={{ position:'fixed', top:0, left:0, right:0, bottom:0, background:'rgba(0,0,0,0.5)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:2000 }}>
+          <div style={{ background:'#fff', borderRadius:'0.75rem', padding:'1.25rem', width:'100%', maxWidth:'32rem', margin:'1rem', border:'1px solid #e5e7eb', boxShadow:'0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)' }}>
+            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'0.75rem' }}>
+              <h3 style={{ margin:0, color:'#1f2937', fontSize:'1.125rem', fontWeight:600 }}>Empréstimo #{detailLoan.id}</h3>
+              <button onClick={() => setDetailLoan(null)} style={{ background:'#6b7280', color:'#fff', border:'none', borderRadius:'0.5rem', padding:'0.5rem 0.75rem', cursor:'pointer', fontSize:'0.875rem' }}>Fechar</button>
+            </div>
+            <div style={{ color:'#6b7280', fontSize:'0.9rem', display:'grid', gridTemplateColumns:'1fr 1fr', gap:'0.5rem' }}>
+              <div>Valor: <span style={{ color:'#1f2937', fontWeight:600 }}>MT {Number(detailLoan.amount).toLocaleString()}</span></div>
+              <div>Status: <span style={{ color:'#1f2937', fontWeight:600 }}>{detailLoan.status}</span></div>
+              <div>Data: <span style={{ color:'#1f2937', fontWeight:600 }}>{detailLoan.date}</span></div>
+              <div>Vencimento: <span style={{ color:'#1f2937', fontWeight:600 }}>{detailLoan.dueDate}</span></div>
+            </div>
+            <div style={{ marginTop:'1rem' }}>
+              <h4 style={{ margin:'0 0 0.5rem 0', color:'#1f2937', fontSize:'1rem', fontWeight:600 }}>Pagamentos</h4>
+              {(payments || []).filter(p => p.loanId === detailLoan.id).map((p)=>(
+                <div key={p.id} style={{ display:'grid', gridTemplateColumns:'1fr auto auto', gap:'0.5rem', alignItems:'center', color:'#374151', fontSize:'0.875rem' }}>
+                  <span>{p.date}</span>
+                  <span>MT {Number(p.amount).toLocaleString()}</span>
+                  <button onClick={() => openReceipt(p, detailLoan)} style={{ background:'#2563eb', color:'#fff', border:'none', borderRadius:'0.5rem', padding:'0.25rem 0.5rem', cursor:'pointer', fontSize:'0.75rem' }}>Recibo</button>
+                </div>
+              ))}
+              {((payments || []).filter(p => p.loanId === detailLoan.id).length === 0) && (
+                <div style={{ color:'#6b7280', fontSize:'0.875rem' }}>Sem pagamentos.</div>
+              )}
+            </div>
+            <div style={{ marginTop:'1rem' }}>
+              <h4 style={{ margin:'0 0 0.5rem 0', color:'#1f2937', fontSize:'1rem', fontWeight:600 }}>Contratos</h4>
+              {(() => {
+                const atts = getAttachmentsForLoan(detailLoan.id);
+                if (!atts || atts.length === 0) {
+                  return <div style={{ color:'#6b7280', fontSize:'0.875rem' }}>Sem contratos anexados.</div>;
+                }
+                return (
+                  <div style={{ display:'flex', flexDirection:'column', gap:'0.5rem' }}>
+                    {atts.map(a => (
+                      <div key={a.id} style={{ display:'flex', justifyContent:'space-between', fontSize:'0.875rem', color:'#374151' }}>
+                        <span title={`${a.name} (${a.size} bytes)`}>{a.name}</span>
+                        <span style={{ color:'#6b7280' }}>{a.uploadedAt}</span>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

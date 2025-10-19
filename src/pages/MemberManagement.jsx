@@ -10,7 +10,16 @@ const MemberManagement = () => {
     memberNumber: '',
     contact: ''
   });
-  const [localMembers, setLocalMembers] = useState(members);
+  const [localMembers, setLocalMembers] = useState(() => {
+    try {
+      const raw = localStorage.getItem('members');
+      if (raw) {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr)) return arr;
+      }
+    } catch {}
+    return members.map(m => ({ ...m, status: (String(m.status).toLowerCase() === 'ativo' ? 'active' : (String(m.status).toLowerCase() === 'inativo' ? 'inactive' : (m.status || 'active'))) }));
+  });
   const [showEditForm, setShowEditForm] = useState(false);
   const [memberToEdit, setMemberToEdit] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -102,6 +111,10 @@ const MemberManagement = () => {
     
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  useEffect(() => {
+    try { localStorage.setItem('members', JSON.stringify(localMembers)); } catch {}
+  }, [localMembers]);
 
   const normalizedSearch = searchQuery.trim().toLowerCase();
   const filteredMembers = localMembers.filter((m) => {
@@ -378,14 +391,14 @@ const MemberManagement = () => {
                 {member.name}
               </h3>
               <span style={{
-                backgroundColor: member.status === 'active' ? '#10b981' : '#ef4444',
+                backgroundColor: (member.status === 'active' || String(member.status).toLowerCase() === 'ativo') ? '#10b981' : '#ef4444',
                 color: 'white',
                 padding: '0.25rem 0.75rem',
                 borderRadius: '9999px',
                 fontSize: '0.75rem',
                 fontWeight: '500'
               }}>
-                {member.status === 'active' ? 'Activo' : 'Inactivo'}
+                {(member.status === 'active' || String(member.status).toLowerCase() === 'ativo') ? 'Activo' : 'Inactivo'}
               </span>
             </div>
             <div style={{ color: '#6b7280', fontSize: '0.875rem' }}>
@@ -451,7 +464,7 @@ const MemberManagement = () => {
               <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
                 <input
                   type="checkbox"
-                  checked={member.status === 'active'}
+                  checked={(member.status === 'active' || String(member.status).toLowerCase() === 'ativo')}
                   onChange={() => handleToggleStatus(member)}
                   style={{ display: 'none' }}
                 />
@@ -459,7 +472,7 @@ const MemberManagement = () => {
                   width: '2.5rem',
                   height: '1.25rem',
                   borderRadius: '0.625rem',
-                  backgroundColor: member.status === 'active' ? '#10b981' : '#d1d5db',
+                  backgroundColor: (member.status === 'active' || String(member.status).toLowerCase() === 'ativo') ? '#10b981' : '#d1d5db',
                   position: 'relative',
                   transition: 'background-color 0.2s'
                 }}>
@@ -470,18 +483,55 @@ const MemberManagement = () => {
                     backgroundColor: 'white',
                     position: 'absolute',
                     top: '0.125rem',
-                    left: member.status === 'active' ? '1.3rem' : '0.125rem',
+                    left: (member.status === 'active' || String(member.status).toLowerCase() === 'ativo') ? '1.3rem' : '0.125rem',
                     transition: 'left 0.2s'
                   }} />
                 </div>
                 <span style={{ marginLeft: '0.5rem', color: '#6b7280', fontSize: '0.875rem' }}>
-                  {member.status === 'active' ? 'Ativo' : 'Inativo'}
+                  {(member.status === 'active' || String(member.status).toLowerCase() === 'ativo') ? 'Ativo' : 'Inativo'}
                 </span>
               </label>
             </div>
           </div>
         ))}
       </div>
+      {showEditForm && memberToEdit && (
+        <div style={{ position:'fixed', top:0, left:0, right:0, bottom:0, background:'rgba(0,0,0,0.5)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:60 }}>
+          <div style={{ background:'#fff', borderRadius:'0.75rem', padding:'1.5rem', width:'100%', maxWidth:'28rem', margin:'1rem', border:'1px solid #e5e7eb', boxShadow:'0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)' }}>
+            <h2 style={{ fontSize:'1.25rem', fontWeight:600, color:'#1f2937', margin:0, marginBottom:'1rem' }}>Editar Membro</h2>
+            <form onSubmit={handleUpdateMember} style={{ display:'flex', flexDirection:'column', gap:'1rem' }}>
+              <div>
+                <label style={{ display:'block', color:'#374151', fontSize:'0.875rem', fontWeight:500, marginBottom:'0.5rem' }}>Nome</label>
+                <input type="text" value={memberToEdit.name} onChange={(e)=> setMemberToEdit({ ...memberToEdit, name: e.target.value })} style={{ width:'100%', background:'#fff', color:'#1f2937', padding:'0.75rem', borderRadius:'0.5rem', border:'1px solid #d1d5db', fontSize:'0.875rem', outline:'none' }} required />
+              </div>
+              <div>
+                <label style={{ display:'block', color:'#374151', fontSize:'0.875rem', fontWeight:500, marginBottom:'0.5rem' }}>Nº Membro</label>
+                <input type="text" value={memberToEdit.memberNumber} onChange={(e)=> setMemberToEdit({ ...memberToEdit, memberNumber: e.target.value })} style={{ width:'100%', background:'#fff', color:'#1f2937', padding:'0.75rem', borderRadius:'0.5rem', border:'1px solid #d1d5db', fontSize:'0.875rem', outline:'none' }} required />
+              </div>
+              <div>
+                <label style={{ display:'block', color:'#374151', fontSize:'0.875rem', fontWeight:500, marginBottom:'0.5rem' }}>Contacto</label>
+                <input type="text" value={memberToEdit.contact} onChange={(e)=> setMemberToEdit({ ...memberToEdit, contact: e.target.value })} style={{ width:'100%', background:'#fff', color:'#1f2937', padding:'0.75rem', borderRadius:'0.5rem', border:'1px solid #d1d5db', fontSize:'0.875rem', outline:'none' }} required />
+              </div>
+              <div style={{ display:'flex', gap:'0.75rem' }}>
+                <button type="submit" style={{ flex:1, background:'#2563eb', color:'#fff', padding:'0.75rem', borderRadius:'0.5rem', border:'none', cursor:'pointer', fontSize:'0.875rem', fontWeight:500 }}>Guardar</button>
+                <button type="button" onClick={()=> { setShowEditForm(false); setMemberToEdit(null); }} style={{ flex:1, background:'#6b7280', color:'#fff', padding:'0.75rem', borderRadius:'0.5rem', border:'none', cursor:'pointer', fontSize:'0.875rem', fontWeight:500 }}>Cancelar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {showDeleteModal && memberToDelete && (
+        <div style={{ position:'fixed', top:0, left:0, right:0, bottom:0, background:'rgba(0,0,0,0.5)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:60 }}>
+          <div style={{ background:'#fff', borderRadius:'0.75rem', padding:'1.5rem', width:'100%', maxWidth:'24rem', margin:'1rem', border:'1px solid #e5e7eb', boxShadow:'0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)' }}>
+            <h3 style={{ fontSize:'1.125rem', fontWeight:600, color:'#1f2937', margin:0, marginBottom:'0.75rem' }}>Remover Membro</h3>
+            <p style={{ color:'#6b7280', fontSize:'0.875rem', marginTop:0, marginBottom:'1rem' }}>Tem certeza que deseja remover <strong style={{ color:'#1f2937' }}>{memberToDelete.name}</strong>?</p>
+            <div style={{ display:'flex', gap:'0.75rem' }}>
+              <button onClick={confirmDelete} style={{ flex:1, background:'#ef4444', color:'#fff', padding:'0.75rem', borderRadius:'0.5rem', border:'none', cursor:'pointer', fontSize:'0.875rem', fontWeight:500 }}>Remover</button>
+              <button onClick={cancelDelete} style={{ flex:1, background:'#6b7280', color:'#fff', padding:'0.75rem', borderRadius:'0.5rem', border:'none', cursor:'pointer', fontSize:'0.875rem', fontWeight:500 }}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
       {toast.show && (
         <Toast 
           message={toast.message} 

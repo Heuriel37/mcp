@@ -79,6 +79,60 @@ const Reports = () => {
     return { totalLoaned, totalPaid, overdueCount, overdueAmount };
   }, [filteredPayments]);
 
+  const exportPDF = () => {
+    const rows = filteredPayments.map((p) => {
+      const loan = loans.find((l) => l.id === p.loanId);
+      return { date: p.date, member: loan?.member || '-', amount: Number(p.amount) };
+    });
+    const now = new Date().toLocaleString();
+    const sum = rows.reduce((s,r)=> s + (r.amount||0), 0);
+    const html = `<!doctype html><html><head><meta charset=\"utf-8\"><title>Relatório de Pagamentos</title>
+    <style>
+      @page { size: A4; margin: 20mm; }
+      *{box-sizing:border-box}
+      body{font-family: Arial, sans-serif; color:#111827;}
+      header{position: fixed; top: -10mm; left: 0; right: 0; height: 10mm; display:flex; align-items:center; justify-content:space-between; font-size:12px;}
+      footer{position: fixed; bottom: -10mm; left: 0; right: 0; height: 10mm; display:flex; align-items:center; justify-content:space-between; font-size:12px; color:#6b7280}
+      .pagenum:before { content: counter(page); }
+      .totalpages:before { content: counter(pages); }
+      .content{margin-top: 8mm;}
+      h1{margin:0 0 8px 0; font-size:18px}
+      .meta{font-size:12px; color:#6b7280; margin-bottom: 8px}
+      .kpis{display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; margin: 8px 0 12px 0}
+      .card{border:1px solid #e5e7eb; border-radius:8px; padding:8px}
+      table{width:100%; border-collapse: collapse; margin-top: 8px}
+      thead{display: table-header-group}
+      tfoot{display: table-row-group}
+      tr{page-break-inside: avoid}
+      th,td{text-align:left; padding:8px; border-bottom:1px solid #e5e7eb; font-size:12px}
+      th{color:#6b7280; font-weight:600}
+      .right{text-align:right}
+    </style></head><body>
+      <header>
+        <div style=\"display:flex;align-items:center;gap:8px\"><img src=\"/malabo-logo.svg\" style=\"width:18px;height:18px\"/> <strong>Malabo Microcrédito</strong></div>
+        <div>Relatório de Pagamentos</div>
+      </header>
+      <footer>
+        <div>Emitido em ${now}</div>
+        <div>Página <span class=\"pagenum\"></span> de <span class=\"totalpages\"></span></div>
+      </footer>
+      <div class=\"content\">
+        <h1>Pagamentos</h1>
+        <div class=\"meta\">Filtros: De ${fromDate || '-'} Até ${toDate || '-'} | Membro: ${memberQuery || '-'}</div>
+        <div class=\"kpis\">
+          <div class=\"card\"><div>Total Emprestado</div><div><strong>MT ${totals.totalLoaned.toLocaleString()}</strong></div></div>
+          <div class=\"card\"><div>Total Pago (filtrado)</div><div><strong>MT ${totals.totalPaid.toLocaleString()}</strong></div></div>
+          <div class=\"card\"><div>Em Atraso</div><div><strong>${totals.overdueCount} / MT ${totals.overdueAmount.toLocaleString()}</strong></div></div>
+        </div>
+        <table><thead><tr><th>Data</th><th>Membro</th><th class=\"right\">Valor (MT)</th></tr></thead><tbody>
+          ${rows.map(r=>`<tr><td>${r.date}</td><td>${r.member}</td><td class=\\"right\\">${r.amount.toLocaleString()}</td></tr>`).join('')}
+        </tbody><tfoot><tr><td></td><td style=\"text-align:right;font-weight:600\">Total</td><td class=\"right\" style=\"font-weight:700\">${sum.toLocaleString()}</td></tr></tfoot></table>
+      </div>
+      <script>window.print()</script>
+    </body></html>`;
+    const w = window.open('', '_blank'); if (w) { w.document.write(html); w.document.close(); }
+  };
+
   return (
     <div style={{
       display: 'flex', flexDirection: 'column', gap: isMobile ? '1rem' : '1.5rem',
@@ -88,10 +142,16 @@ const Reports = () => {
         <h1 style={{ fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: 'bold', color: '#1f2937', margin: 0 }}>
           Relatórios
         </h1>
+        <div style={{ display:'flex', gap:'0.5rem' }}>
         <button onClick={exportCSV} style={{ backgroundColor: '#2563eb', color: '#fff', padding: '0.5rem 1rem', borderRadius: '0.5rem', border: 'none', cursor: 'pointer', fontSize: '0.875rem', fontWeight: 500 }}
           onMouseOver={(e)=> e.currentTarget.style.backgroundColor = '#1d4ed8'}
           onMouseOut={(e)=> e.currentTarget.style.backgroundColor = '#2563eb'}
         >Exportar CSV</button>
+        <button onClick={exportPDF} style={{ backgroundColor: '#374151', color: '#fff', padding: '0.5rem 1rem', borderRadius: '0.5rem', border: 'none', cursor: 'pointer', fontSize: '0.875rem', fontWeight: 500 }}
+          onMouseOver={(e)=> e.currentTarget.style.backgroundColor = '#111827'}
+          onMouseOut={(e)=> e.currentTarget.style.backgroundColor = '#374151'}
+        >Exportar PDF</button>
+        </div>
       </div>
 
       {/* Filtros */}

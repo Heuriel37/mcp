@@ -86,7 +86,9 @@ const Sidebar = ({ isMobile, sidebarOpen, setSidebarOpen }) => {
               style={{
                 width: '100%',
                 height: '100%',
-                objectFit: 'contain'
+                objectFit: 'contain',
+                borderRadius: '9999px',
+                display: 'block'
               }}
             />
           </div>
